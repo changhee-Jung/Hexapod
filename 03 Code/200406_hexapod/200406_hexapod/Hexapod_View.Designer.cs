@@ -53,6 +53,7 @@
             this.txtOutput_L3 = new System.Windows.Forms.TextBox();
             this.txtOutput_L2 = new System.Windows.Forms.TextBox();
             this.txtOutput_L1 = new System.Windows.Forms.TextBox();
+            this.glControl1 = new OpenTK.GLControl();
             this.SuspendLayout();
             // 
             // txtInput_X
@@ -257,11 +258,21 @@
             this.txtOutput_L1.Size = new System.Drawing.Size(113, 21);
             this.txtOutput_L1.TabIndex = 19;
             // 
+            // glControl1
+            // 
+            this.glControl1.BackColor = System.Drawing.Color.Black;
+            this.glControl1.Location = new System.Drawing.Point(431, 29);
+            this.glControl1.Name = "glControl1";
+            this.glControl1.Size = new System.Drawing.Size(242, 243);
+            this.glControl1.TabIndex = 31;
+            this.glControl1.VSync = false;
+            // 
             // Hexapod_View
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(415, 396);
+            this.ClientSize = new System.Drawing.Size(758, 571);
+            this.Controls.Add(this.glControl1);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label9);
@@ -321,6 +332,7 @@
         private System.Windows.Forms.TextBox txtOutput_L3;
         private System.Windows.Forms.TextBox txtOutput_L2;
         private System.Windows.Forms.TextBox txtOutput_L1;
+        private OpenTK.GLControl glControl1;
     }
 }
 

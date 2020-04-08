@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using OpenTK;
+using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 namespace _200406_hexapod
 {
     public partial class Hexapod_View : Form
@@ -16,12 +19,15 @@ namespace _200406_hexapod
         #region 멤버
 
         Hexapod_Model Model = new Hexapod_Model();
+        static float fangle = 0.0f;
 
         #endregion
 
         public Hexapod_View()
         {
+
             InitializeComponent();
+      
         }
 
         private void btnCalculate_InverseKinematics_Click(object sender, EventArgs e)
@@ -41,4 +47,37 @@ namespace _200406_hexapod
         }
 
     }
+
+    class Draw3D : GameWindow
+    {
+        public Draw3D(int width, int height) : base(width,height)
+        {
+
+        }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+        }
+
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            base.OnUpdateFrame(e);
+        }
+
+        protected override void OnRenderFrame(FrameEventArgs e)
+        {
+            base.OnRenderFrame(e);
+            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.ClearColor(Color.White);
+
+            this.SwapBuffers();
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            GL.Viewport(0, 0, this.Width, this.Height);
+            base.OnResize(e);
+        }
+    }
+    
 }

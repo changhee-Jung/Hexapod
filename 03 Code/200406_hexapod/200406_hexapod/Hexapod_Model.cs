@@ -65,8 +65,7 @@ namespace _200406_hexapod
 
         private void CompensateOrigin_Upper()
         {
-            double[] dbTra
-            double[] dbToolCompensation = CalculateRotateEulerAngle(m_dbRoll,m_dbPitch,m_dbYaw,)
+          
         }
 
         #endregion

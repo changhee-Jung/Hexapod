@@ -20,3 +20,6 @@ namespace _200406_hexapod
         }
     }
 }
+
+
+//https://yaraba.tistory.com/199 //c#으로 3D 모델 출력하기
