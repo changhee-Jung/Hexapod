@@ -1,8 +1,0 @@
-
-https://opentk.net/learn/chapter1/2-hello-triangle.html // OpenTK 홈페이지
-
-https://sourceforge.net/projects/opentk/ // OpenTK Library 다운로드
-
-https://yaraba.tistory.com/199 //c#으로 3D 모델 출력하기
-
-https://blog.danggun.net/3062 // Open 원폼 띄우기
