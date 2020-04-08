@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace _200406_hexapod
+namespace _200408_Hexapod
 {
     static class Program
     {
@@ -16,10 +16,8 @@ namespace _200406_hexapod
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Hexapod_View());
+            Controller Main_Controller = new Controller();
+            Application.Run();
         }
     }
 }
-
-
-//https://yaraba.tistory.com/199 //c#으로 3D 모델 출력하기

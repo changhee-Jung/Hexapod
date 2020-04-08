@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace _200406_hexapod.Properties
+namespace _200408_Hexapod.Properties
 {
 
 
