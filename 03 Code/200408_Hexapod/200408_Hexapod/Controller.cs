@@ -50,7 +50,11 @@ namespace _200408_Hexapod
 
         private void CalculateVector()
         {
-
+            // 1. base to base point vector 계산
+            Model_Coordinate.CalculateBaseToBaseJoint(Model_hw.Plate_Base.dicOfJointVector);        
+            // 2. base에서 바라본 upper point vector 계산
+            
+            // 3. 최종 Actuator Vector 계산
         }
 
         #endregion

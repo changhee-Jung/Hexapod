@@ -58,9 +58,7 @@ namespace _200408_Hexapod
 
         private void btnCalculateVector_Click(object sender, EventArgs e)
         {
-            // 1. base to base point vector 계산
-            // 2. base에서 바라본 upper point vector 계산
-            // 3. 최종 Actuator Vector 계산
+          
 
 
         }

@@ -221,7 +221,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1066, 352);
+            this.ClientSize = new System.Drawing.Size(839, 352);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.txtHeight);
             this.Controls.Add(this.btnCalculateVector);

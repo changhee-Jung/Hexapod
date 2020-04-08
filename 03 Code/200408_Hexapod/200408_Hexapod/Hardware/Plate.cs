@@ -15,7 +15,7 @@ namespace _200408_Hexapod
         private double m_dbRadius = 0;
         private double m_dbAngleOfOffset = 0;
 
-        Dictionary<int, double[]> m_dicOfJoint = new Dictionary<int, double[]>();
+        Dictionary<int, double[]> m_dicOfJointVector = new Dictionary<int, double[]>();
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace _200408_Hexapod
         public int NumberOfJoint { get { return m_nNumberOfJoint; } }
         public double Radius { get { return m_dbRadius; } set { m_dbRadius = value; } }
         public double AngleOfOffset { get { return m_dbAngleOfOffset; } set { m_dbAngleOfOffset = value; } }
-
+        public Dictionary<int, double[]> dicOfJointVector { get { return m_dicOfJointVector; } }
         #endregion
 
         #region 생성자
@@ -38,7 +38,7 @@ namespace _200408_Hexapod
             for (int i = 0; i < nNumberOfJoint; i++)
             {
                 double[] dbVector = { 0, 0, 0 };
-                m_dicOfJoint.Add(i, dbVector);
+                m_dicOfJointVector.Add(i, dbVector);
             }
         }
 
@@ -50,12 +50,19 @@ namespace _200408_Hexapod
         /// </summary>        
         public void SetJointVector(int nIndex, double[] dbVector)
         {
-            if (false == m_dicOfJoint.ContainsKey(nIndex)) { return; }
+            if (false == m_dicOfJointVector.ContainsKey(nIndex)) { return; }
 
-            m_dicOfJoint[nIndex] = dbVector;
+            m_dicOfJointVector[nIndex] = dbVector;
 
         }
+        /// <summary>
+        /// 2020.04.08 by chjung [ADD] 해당 조인트에 벡터 값을 가져온다.
+        /// </summary>
+        public double[] GetJointVector(int nIndex)
+        {
+            return m_dicOfJointVector[nIndex];
 
+        }
         /// <summary>
         /// 2020.04.08 by chjung [ADD] 각 판 조인트 벡터를 계산한다.
         /// </summary>
@@ -92,7 +99,7 @@ namespace _200408_Hexapod
                 double dbVector_X = m_dbRadius * Math.Cos(dbAngleOfPoint);
                 double dbVector_Y = m_dbRadius * Math.Sin(dbAngleOfPoint);
                 double[] arVector = { dbVector_X, dbVector_Y, 0 };
-                m_dicOfJoint[i] = arVector;
+                m_dicOfJointVector[i] = arVector;
             }
         }
 

@@ -40,6 +40,8 @@ namespace _200408_Hexapod
             }
             return dbResult;
         }
+
+        
         /// <summary>
         /// 2020.04.08 by chjung [ADD] Norm 계산을 수행한다.
         /// </summary>
