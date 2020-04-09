@@ -25,6 +25,10 @@ namespace _200408_Hexapod
         public SetHexapod_Hardware Delegate_SetHardware;
         public delegate void SetHexapod_HeightVector(double dbHeight);
         public SetHexapod_HeightVector Delegate_SetHeightVector;
+        public delegate void SetHexapod_Target(double[] dbPosition, double[] dbRotation);
+        public SetHexapod_Target Delegate_SetTarget;
+        public delegate void CalculateMovingVector();
+        public CalculateMovingVector Delegate_CalculateMovingVector;
         #endregion
 
         #region 메소드
@@ -38,6 +42,7 @@ namespace _200408_Hexapod
             int nDegreeOfOffset_Upper    = Convert.ToInt16(txtAngleOfOffset_Upper.Text.Trim());
             double dbRadius_Upper        = Convert.ToDouble(txtRadius_Upper.Text.Trim());          
             double dbAngleOfOffset_Upper = nDegreeOfOffset_Upper * Math.PI / 180;
+            
 
             Delegate_SetHardware(nNumberOfJoint, dbRadius_Base, dbAngleOfOffset_Base, dbRadius_Upper, dbAngleOfOffset_Upper);
 
@@ -51,20 +56,40 @@ namespace _200408_Hexapod
 
             DataGridView_Vector.Columns[0].Name = "Vector";
             DataGridView_Vector.Columns[1].Name = "X";
-            DataGridView_Vector.Columns[2].Name = "Y";
+            DataGridView_Vector.Columns[2].Name = "Y"; 
             DataGridView_Vector.Columns[3].Name = "Z";
             DataGridView_Vector.Columns[4].Name = "Length";
         }
 
         private void btnCalculateVector_Click(object sender, EventArgs e)
         {
-          
-
-
+            Delegate_CalculateMovingVector();
         }
 
 
         #endregion
+
+        private void btnSetTarget_Click(object sender, EventArgs e)
+        {
+            double dbTarget_X = Convert.ToDouble(txtTarget_X.Text.Trim());
+            double dbTarget_Y = Convert.ToDouble(txtTarget_Y.Text.Trim());
+            double dbTarget_Z = Convert.ToDouble(txtTarget_Z.Text.Trim());
+
+            double[] dbPosition = { dbTarget_X, dbTarget_Y, dbTarget_Z };
+
+            int nDegreeOfTarget_Roll  = Convert.ToInt16(txtTarget_Roll.Text.Trim());
+            int nDegreeOfTarget_Pitch = Convert.ToInt16(txtTarget_Pitch.Text.Trim());
+            int nDegreeOfTarget_Yaw   = Convert.ToInt16(txtTarget_Yaw.Text.Trim());
+            double dbTarget_Roll      = nDegreeOfTarget_Roll * Math.PI / 180;
+            double dbTarget_Pitch     = nDegreeOfTarget_Pitch * Math.PI / 180;
+            double dbTarget_Yaw       = nDegreeOfTarget_Yaw * Math.PI / 180;
+
+            double[] dbRotation = { dbTarget_Roll, dbTarget_Pitch, dbTarget_Yaw };
+
+            Delegate_SetTarget(dbPosition, dbRotation);
+
+        }
+
 
 
 
