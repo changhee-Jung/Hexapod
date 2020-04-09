@@ -20,11 +20,14 @@ namespace _200408_Hexapod
         /// <summary>
         /// 2020.04.08 by chjung [ADD] Euler(XYZ) 회전 행렬 변환을 수행한다.
         /// </summary>
-        public double[] CalculateRotateEulerAngle(double dbRoll, double dbPitch, double dbYaw, double[] dbVector)
+        public double[] CalculateRotateEulerAngle(double[] dbRotation, double[] dbVector)
         {
             double[] dbResult = { 0, 0, 0 };
-
-            if (dbVector.Length == 2)
+            double dbRoll  = dbRotation[0];
+            double dbPitch = dbRotation[1];
+            double dbYaw   = dbRotation[2];
+            
+            if (dbVector.Length == 3)
             {
                 dbResult[0] = Math.Cos(dbPitch) * Math.Cos(dbYaw) * dbVector[0]
                                    + (Math.Sin(dbRoll) * Math.Sin(dbPitch) * Math.Cos(dbYaw) - Math.Cos(dbRoll) * Math.Sin(dbYaw)) * dbVector[1]
@@ -40,7 +43,23 @@ namespace _200408_Hexapod
             }
             return dbResult;
         }
+        /// <summary>
+        /// 2020.04.09 by chjung [ADD] 각 벡터간의 위치 이동을 수행한다.
+        /// </summary>
+        public double[] CalculateTranslationVector(double[] dbPosition, double[] dbMovePosition)
+        {
+            // 두 매개변수의 길이(갯수)가 다르면 에러 처리
 
+            int nLengthOfVector = dbPosition.Length;
+            double[] dbResult = new double[nLengthOfVector];
+
+            for (int i = 0; i < nLengthOfVector; i++ )
+            {
+                dbResult[i] = dbPosition[i] + dbMovePosition[i];
+            }
+
+            return dbResult;
+        }
         
         /// <summary>
         /// 2020.04.08 by chjung [ADD] Norm 계산을 수행한다.
