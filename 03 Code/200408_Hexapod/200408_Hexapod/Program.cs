@@ -16,8 +16,8 @@ namespace _200408_Hexapod
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Controller Main_Controller = new Controller();
-            Application.Run();
+            Application.Run(new Main_UI());
+
         }
     }
 }

@@ -9,20 +9,18 @@ namespace _200408_Hexapod
     class Plate
     {
         #region 멤버
-
         private int m_nNumberOfJoint     = 0;
-        private double m_height          = 0;
+        private double m_Height          = 0;
         private double m_dbRadius        = 0;
         private double m_dbAngleOfOffset = 0;
         private double[] m_dbPosition    = { 0, 0, 0 };
         private double[] m_dbRotation    = { 0, 0, 0 };
         Dictionary<int, double[]> m_dicOfJointVector = new Dictionary<int, double[]>();
-
         #endregion
 
         #region 속성
-
         public int NumberOfJoint { get { return m_nNumberOfJoint; } }
+        public double Height { get { return m_Height; } set { m_Height = value; } }
         public double Radius { get { return m_dbRadius; } set { m_dbRadius = value; } }
         public double AngleOfOffset { get { return m_dbAngleOfOffset; } set { m_dbAngleOfOffset = value; } }
         public double[] Position { get { return m_dbPosition; } set { m_dbPosition = value; } }
@@ -31,7 +29,6 @@ namespace _200408_Hexapod
         #endregion
 
         #region 생성자
-
         public Plate(int nNumberOfJoint, double dbRadius, double dbAngleOfOffset)
         {
             m_nNumberOfJoint = nNumberOfJoint;
@@ -44,7 +41,6 @@ namespace _200408_Hexapod
                 m_dicOfJointVector.Add(i, dbVector);
             }
         }
-
         #endregion
 
         #region 메소드

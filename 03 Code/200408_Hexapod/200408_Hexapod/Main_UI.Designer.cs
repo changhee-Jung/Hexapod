@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.label13 = new System.Windows.Forms.Label();
             this.txtNumOfJoint = new System.Windows.Forms.TextBox();
             this.btnMakeHardware = new System.Windows.Forms.Button();
@@ -47,6 +49,13 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtHeight = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.txtToolOffset_Z = new System.Windows.Forms.TextBox();
+            this.txtToolOffset_Y = new System.Windows.Forms.TextBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.txtToolOffset_X = new System.Windows.Forms.TextBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.btnSetTarget = new System.Windows.Forms.Button();
             this.txtTarget_Yaw = new System.Windows.Forms.TextBox();
@@ -61,17 +70,22 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtTarget_X = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.chartLinearGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.cboSelectGraph = new System.Windows.Forms.ComboBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView_Vector)).BeginInit();
             this.groupBox3.SuspendLayout();
+            this.groupBox5.SuspendLayout();
             this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartLinearGraph)).BeginInit();
             this.SuspendLayout();
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(21, 205);
+            this.label13.Location = new System.Drawing.Point(21, 203);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(111, 12);
             this.label13.TabIndex = 46;
@@ -79,7 +93,7 @@
             // 
             // txtNumOfJoint
             // 
-            this.txtNumOfJoint.Location = new System.Drawing.Point(156, 201);
+            this.txtNumOfJoint.Location = new System.Drawing.Point(156, 199);
             this.txtNumOfJoint.Name = "txtNumOfJoint";
             this.txtNumOfJoint.Size = new System.Drawing.Size(50, 21);
             this.txtNumOfJoint.TabIndex = 45;
@@ -87,11 +101,11 @@
             // 
             // btnMakeHardware
             // 
-            this.btnMakeHardware.Location = new System.Drawing.Point(10, 260);
+            this.btnMakeHardware.Location = new System.Drawing.Point(157, 271);
             this.btnMakeHardware.Name = "btnMakeHardware";
-            this.btnMakeHardware.Size = new System.Drawing.Size(212, 35);
+            this.btnMakeHardware.Size = new System.Drawing.Size(62, 91);
             this.btnMakeHardware.TabIndex = 44;
-            this.btnMakeHardware.Text = "Make HardWare";
+            this.btnMakeHardware.Text = "Set";
             this.btnMakeHardware.UseVisualStyleBackColor = true;
             this.btnMakeHardware.Click += new System.EventHandler(this.btnMakeHardware_Click);
             // 
@@ -191,17 +205,19 @@
             // 
             // DataGridView_Vector
             // 
+            this.DataGridView_Vector.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.DataGridView_Vector.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
             this.DataGridView_Vector.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.DataGridView_Vector.Location = new System.Drawing.Point(423, 42);
+            this.DataGridView_Vector.Location = new System.Drawing.Point(393, 27);
             this.DataGridView_Vector.Name = "DataGridView_Vector";
             this.DataGridView_Vector.RowTemplate.Height = 23;
-            this.DataGridView_Vector.Size = new System.Drawing.Size(414, 278);
+            this.DataGridView_Vector.Size = new System.Drawing.Size(648, 120);
             this.DataGridView_Vector.TabIndex = 47;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(421, 22);
+            this.label1.Location = new System.Drawing.Point(391, 7);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(86, 12);
             this.label1.TabIndex = 48;
@@ -209,9 +225,9 @@
             // 
             // btnCalculateVector
             // 
-            this.btnCalculateVector.Location = new System.Drawing.Point(167, 317);
+            this.btnCalculateVector.Location = new System.Drawing.Point(239, 276);
             this.btnCalculateVector.Name = "btnCalculateVector";
-            this.btnCalculateVector.Size = new System.Drawing.Size(212, 35);
+            this.btnCalculateVector.Size = new System.Drawing.Size(140, 102);
             this.btnCalculateVector.TabIndex = 49;
             this.btnCalculateVector.Text = "Calculate Vector";
             this.btnCalculateVector.UseVisualStyleBackColor = true;
@@ -220,7 +236,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(21, 239);
+            this.label2.Location = new System.Drawing.Point(21, 237);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(52, 12);
             this.label2.TabIndex = 51;
@@ -228,7 +244,7 @@
             // 
             // txtHeight
             // 
-            this.txtHeight.Location = new System.Drawing.Point(156, 235);
+            this.txtHeight.Location = new System.Drawing.Point(156, 233);
             this.txtHeight.Name = "txtHeight";
             this.txtHeight.Size = new System.Drawing.Size(50, 21);
             this.txtHeight.TabIndex = 50;
@@ -236,19 +252,86 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.groupBox5);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.txtHeight);
+            this.groupBox3.Controls.Add(this.btnMakeHardware);
             this.groupBox3.Controls.Add(this.label13);
             this.groupBox3.Controls.Add(this.txtNumOfJoint);
-            this.groupBox3.Controls.Add(this.btnMakeHardware);
             this.groupBox3.Controls.Add(this.groupBox2);
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Location = new System.Drawing.Point(2, 5);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(231, 300);
+            this.groupBox3.Size = new System.Drawing.Size(231, 373);
             this.groupBox3.TabIndex = 52;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Setting";
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.label9);
+            this.groupBox5.Controls.Add(this.txtToolOffset_Z);
+            this.groupBox5.Controls.Add(this.txtToolOffset_Y);
+            this.groupBox5.Controls.Add(this.label10);
+            this.groupBox5.Controls.Add(this.label11);
+            this.groupBox5.Controls.Add(this.txtToolOffset_X);
+            this.groupBox5.Location = new System.Drawing.Point(10, 263);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(141, 99);
+            this.groupBox5.TabIndex = 59;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "ToolOffset";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(7, 77);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(21, 12);
+            this.label9.TabIndex = 58;
+            this.label9.Text = "Z :";
+            // 
+            // txtToolOffset_Z
+            // 
+            this.txtToolOffset_Z.Location = new System.Drawing.Point(83, 74);
+            this.txtToolOffset_Z.Name = "txtToolOffset_Z";
+            this.txtToolOffset_Z.Size = new System.Drawing.Size(50, 21);
+            this.txtToolOffset_Z.TabIndex = 57;
+            this.txtToolOffset_Z.Text = "0";
+            // 
+            // txtToolOffset_Y
+            // 
+            this.txtToolOffset_Y.Location = new System.Drawing.Point(83, 44);
+            this.txtToolOffset_Y.Name = "txtToolOffset_Y";
+            this.txtToolOffset_Y.Size = new System.Drawing.Size(50, 21);
+            this.txtToolOffset_Y.TabIndex = 56;
+            this.txtToolOffset_Y.Text = "0";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(7, 47);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(21, 12);
+            this.label10.TabIndex = 55;
+            this.label10.Text = "Y :";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(7, 18);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(21, 12);
+            this.label11.TabIndex = 54;
+            this.label11.Text = "X :";
+            // 
+            // txtToolOffset_X
+            // 
+            this.txtToolOffset_X.Location = new System.Drawing.Point(83, 15);
+            this.txtToolOffset_X.Name = "txtToolOffset_X";
+            this.txtToolOffset_X.Size = new System.Drawing.Size(50, 21);
+            this.txtToolOffset_X.TabIndex = 53;
+            this.txtToolOffset_X.Text = "0";
             // 
             // groupBox4
             // 
@@ -265,7 +348,7 @@
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.txtTarget_X);
-            this.groupBox4.Location = new System.Drawing.Point(239, 22);
+            this.groupBox4.Location = new System.Drawing.Point(239, 12);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(140, 253);
             this.groupBox4.TabIndex = 53;
@@ -384,11 +467,44 @@
             this.txtTarget_X.TabIndex = 33;
             this.txtTarget_X.Text = "0";
             // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(391, 157);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(39, 12);
+            this.label12.TabIndex = 54;
+            this.label12.Text = "Graph";
+            // 
+            // chartLinearGraph
+            // 
+            chartArea2.Name = "ChartArea1";
+            this.chartLinearGraph.ChartAreas.Add(chartArea2);
+            legend2.Name = "Legend1";
+            this.chartLinearGraph.Legends.Add(legend2);
+            this.chartLinearGraph.Location = new System.Drawing.Point(393, 189);
+            this.chartLinearGraph.Name = "chartLinearGraph";
+            this.chartLinearGraph.Size = new System.Drawing.Size(648, 206);
+            this.chartLinearGraph.TabIndex = 55;
+            this.chartLinearGraph.Text = "Chart";
+            // 
+            // cboSelectGraph
+            // 
+            this.cboSelectGraph.FormattingEnabled = true;
+            this.cboSelectGraph.Location = new System.Drawing.Point(920, 157);
+            this.cboSelectGraph.Name = "cboSelectGraph";
+            this.cboSelectGraph.Size = new System.Drawing.Size(121, 20);
+            this.cboSelectGraph.TabIndex = 56;
+            this.cboSelectGraph.SelectedIndexChanged += new System.EventHandler(this.cboSelectGraph_SelectedIndexChanged);
+            // 
             // Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(865, 364);
+            this.ClientSize = new System.Drawing.Size(1080, 407);
+            this.Controls.Add(this.cboSelectGraph);
+            this.Controls.Add(this.chartLinearGraph);
+            this.Controls.Add(this.label12);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.btnCalculateVector);
@@ -403,8 +519,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView_Vector)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
             this.groupBox4.ResumeLayout(false);
             this.groupBox4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.chartLinearGraph)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -445,6 +564,16 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtTarget_X;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.TextBox txtToolOffset_Z;
+        private System.Windows.Forms.TextBox txtToolOffset_Y;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox txtToolOffset_X;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chartLinearGraph;
+        private System.Windows.Forms.ComboBox cboSelectGraph;
     }
 }
 

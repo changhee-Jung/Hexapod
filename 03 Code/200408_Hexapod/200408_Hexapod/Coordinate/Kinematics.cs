@@ -30,16 +30,16 @@ namespace _200408_Hexapod
             if (dbVector.Length == 3)
             {
                 dbResult[0] = Math.Cos(dbPitch) * Math.Cos(dbYaw) * dbVector[0]
-                                   + (Math.Sin(dbRoll) * Math.Sin(dbPitch) * Math.Cos(dbYaw) - Math.Cos(dbRoll) * Math.Sin(dbYaw)) * dbVector[1]
-                                   + (Math.Cos(dbRoll) * Math.Sin(dbPitch) * Math.Cos(dbYaw) + Math.Sin(dbRoll) * Math.Sin(dbYaw)) * dbVector[2];
+                             + (Math.Sin(dbRoll) * Math.Sin(dbPitch) * Math.Cos(dbYaw) - Math.Cos(dbRoll) * Math.Sin(dbYaw)) * dbVector[1]
+                             + (Math.Cos(dbRoll) * Math.Sin(dbPitch) * Math.Cos(dbYaw) + Math.Sin(dbRoll) * Math.Sin(dbYaw)) * dbVector[2];
 
                 dbResult[1] = Math.Cos(dbPitch) * Math.Sin(dbYaw) * dbVector[0]
-                                          + (Math.Sin(dbRoll) * Math.Sin(dbPitch) * Math.Sin(dbYaw) + Math.Cos(dbRoll) * Math.Cos(dbYaw)) * dbVector[1]
-                                          + (Math.Cos(dbRoll) * Math.Sin(dbPitch) * Math.Sin(dbYaw) - Math.Sin(dbRoll) * Math.Cos(dbYaw)) * dbVector[2];
+                             + (Math.Sin(dbRoll) * Math.Sin(dbPitch) * Math.Sin(dbYaw) + Math.Cos(dbRoll) * Math.Cos(dbYaw)) * dbVector[1]
+                             + (Math.Cos(dbRoll) * Math.Sin(dbPitch) * Math.Sin(dbYaw) - Math.Sin(dbRoll) * Math.Cos(dbYaw)) * dbVector[2];
 
-                dbResult[2] = -Math.Sin(dbPitch) + dbVector[0]
-                                          + Math.Sin(dbRoll) * Math.Cos(dbPitch) * dbVector[1]
-                                          + Math.Cos(dbRoll) * Math.Cos(dbPitch) * dbVector[2];
+                dbResult[2] = -Math.Sin(dbPitch) * dbVector[0]
+                             + Math.Sin(dbRoll) * Math.Cos(dbPitch) * dbVector[1]
+                             + Math.Cos(dbRoll) * Math.Cos(dbPitch) * dbVector[2];
             }
             return dbResult;
         }

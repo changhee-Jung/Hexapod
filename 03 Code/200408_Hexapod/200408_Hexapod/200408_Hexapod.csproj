@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,7 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controller.cs" />
+    <Compile Include="Controller\Coordinate_Control.cs" />
     <Compile Include="Coordinate\Coordinate_Model.cs" />
     <Compile Include="Coordinate\Kinematics.cs" />
     <Compile Include="Hardware\Hardware_Model.cs" />
@@ -55,8 +56,12 @@
     <Compile Include="Main_UI.Designer.cs">
       <DependentUpon>Main_UI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Motion\Motion_Model.cs" />
+    <Compile Include="Motion\Motor.cs" />
+    <Compile Include="Motion\Profile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SequenceProcess.cs" />
     <EmbeddedResource Include="Main_UI.resx">
       <DependentUpon>Main_UI.cs</DependentUpon>
     </EmbeddedResource>
@@ -82,9 +87,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Motion\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
