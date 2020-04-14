@@ -11,7 +11,7 @@ namespace _200408_Hexapod
         #region 멤버
         private double m_dbPosition       = 0;
         private double m_dbTargetPosition = 0;
-        private double m_dbMaxAccel       = 1.223;
+        private double m_dbMaxAccel       = 1;
         private double m_dbMaxVel         = 1;
         private double m_dbAccelPercent   = 0.5;
         private double m_dbDecelPercent   = 0.5;

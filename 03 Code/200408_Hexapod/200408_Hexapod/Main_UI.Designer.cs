@@ -28,8 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.label13 = new System.Windows.Forms.Label();
             this.txtNumOfJoint = new System.Windows.Forms.TextBox();
             this.btnMakeHardware = new System.Windows.Forms.Button();
@@ -73,6 +72,10 @@
             this.label12 = new System.Windows.Forms.Label();
             this.chartLinearGraph = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.cboSelectGraph = new System.Windows.Forms.ComboBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.label19 = new System.Windows.Forms.Label();
+            this.lblGraphData_X = new System.Windows.Forms.Label();
+            this.lblGraphData_Y = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView_Vector)).BeginInit();
@@ -211,7 +214,7 @@
             this.DataGridView_Vector.Location = new System.Drawing.Point(393, 27);
             this.DataGridView_Vector.Name = "DataGridView_Vector";
             this.DataGridView_Vector.RowTemplate.Height = 23;
-            this.DataGridView_Vector.Size = new System.Drawing.Size(648, 120);
+            this.DataGridView_Vector.Size = new System.Drawing.Size(648, 135);
             this.DataGridView_Vector.TabIndex = 47;
             // 
             // label1
@@ -225,11 +228,11 @@
             // 
             // btnCalculateVector
             // 
-            this.btnCalculateVector.Location = new System.Drawing.Point(239, 276);
+            this.btnCalculateVector.Location = new System.Drawing.Point(239, 271);
             this.btnCalculateVector.Name = "btnCalculateVector";
-            this.btnCalculateVector.Size = new System.Drawing.Size(140, 102);
+            this.btnCalculateVector.Size = new System.Drawing.Size(140, 107);
             this.btnCalculateVector.TabIndex = 49;
-            this.btnCalculateVector.Text = "Calculate Vector";
+            this.btnCalculateVector.Text = "Calculate Vector and Motion";
             this.btnCalculateVector.UseVisualStyleBackColor = true;
             this.btnCalculateVector.Click += new System.EventHandler(this.btnCalculateVector_Click);
             // 
@@ -470,7 +473,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(391, 157);
+            this.label12.Location = new System.Drawing.Point(391, 172);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(39, 12);
             this.label12.TabIndex = 54;
@@ -478,32 +481,71 @@
             // 
             // chartLinearGraph
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartLinearGraph.ChartAreas.Add(chartArea2);
-            legend2.Name = "Legend1";
-            this.chartLinearGraph.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.chartLinearGraph.ChartAreas.Add(chartArea1);
             this.chartLinearGraph.Location = new System.Drawing.Point(393, 189);
             this.chartLinearGraph.Name = "chartLinearGraph";
-            this.chartLinearGraph.Size = new System.Drawing.Size(648, 206);
+            this.chartLinearGraph.Size = new System.Drawing.Size(549, 206);
             this.chartLinearGraph.TabIndex = 55;
             this.chartLinearGraph.Text = "Chart";
+            this.chartLinearGraph.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chartLinearGraph_MouseMove);
             // 
             // cboSelectGraph
             // 
             this.cboSelectGraph.FormattingEnabled = true;
-            this.cboSelectGraph.Location = new System.Drawing.Point(920, 157);
+            this.cboSelectGraph.Location = new System.Drawing.Point(821, 165);
             this.cboSelectGraph.Name = "cboSelectGraph";
             this.cboSelectGraph.Size = new System.Drawing.Size(121, 20);
             this.cboSelectGraph.TabIndex = 56;
             this.cboSelectGraph.SelectedIndexChanged += new System.EventHandler(this.cboSelectGraph_SelectedIndexChanged);
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Location = new System.Drawing.Point(953, 247);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(21, 12);
+            this.label18.TabIndex = 55;
+            this.label18.Text = "Y :";
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Location = new System.Drawing.Point(953, 208);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(21, 12);
+            this.label19.TabIndex = 54;
+            this.label19.Text = "X :";
+            // 
+            // lblGraphData_X
+            // 
+            this.lblGraphData_X.AutoSize = true;
+            this.lblGraphData_X.Location = new System.Drawing.Point(980, 208);
+            this.lblGraphData_X.Name = "lblGraphData_X";
+            this.lblGraphData_X.Size = new System.Drawing.Size(11, 12);
+            this.lblGraphData_X.TabIndex = 57;
+            this.lblGraphData_X.Text = "0";
+            // 
+            // lblGraphData_Y
+            // 
+            this.lblGraphData_Y.AutoSize = true;
+            this.lblGraphData_Y.Location = new System.Drawing.Point(980, 247);
+            this.lblGraphData_Y.Name = "lblGraphData_Y";
+            this.lblGraphData_Y.Size = new System.Drawing.Size(11, 12);
+            this.lblGraphData_Y.TabIndex = 58;
+            this.lblGraphData_Y.Text = "0";
             // 
             // Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1080, 407);
+            this.Controls.Add(this.lblGraphData_Y);
+            this.Controls.Add(this.lblGraphData_X);
             this.Controls.Add(this.cboSelectGraph);
+            this.Controls.Add(this.label18);
             this.Controls.Add(this.chartLinearGraph);
+            this.Controls.Add(this.label19);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
@@ -574,6 +616,10 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.DataVisualization.Charting.Chart chartLinearGraph;
         private System.Windows.Forms.ComboBox cboSelectGraph;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.Label lblGraphData_X;
+        private System.Windows.Forms.Label lblGraphData_Y;
     }
 }
 

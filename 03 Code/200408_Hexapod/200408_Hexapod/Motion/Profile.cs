@@ -10,73 +10,89 @@ namespace _200408_Hexapod
     {
         private bool m_bIsArrive     = false;
         private double m_dbMaxAccel = 0;
-        private double m_nInterval   = 1000;
+        private double m_nInterval  = 1000;
         private Motor m_Motor;
         private Dictionary<int, double> m_dicOfPosition = new Dictionary<int, double>();
         private Dictionary<int, double> m_dicOfVelocity = new Dictionary<int, double>();
 
+        public bool bIsArrive { get { return m_bIsArrive; } set { m_bIsArrive = value; } }
         public double MaxAccel { get { return m_dbMaxAccel; } set { m_dbMaxAccel = value; } }
-        public bool bIsArrive { get { return m_bIsArrive; } }
+        public double Interval { get { return m_nInterval; } set { m_nInterval = value; } }
         public Motor Motor { get { return m_Motor; } }
-
         public Dictionary<int, double>  DicOfVelocity { get { return m_dicOfVelocity; } }
         public Dictionary<int, double>  DicOfPosition { get { return m_dicOfPosition; } }
+
         public Profile(Motor motor)
         {
             m_Motor = motor;
         }
 
-        public void CalculatePositionProfile(int nTickTime, int nEndTime, double dbStartPosition) //EndTime 때 위치값이 동일해야 한다.
+        public void CalculateRequiredVelocity()
+        {
+            double dbInterval = m_nInterval * 0.001;
+            double dbAccelPercent = m_Motor.AccelPercent * 0.5;
+            double dbDecelPercent = m_Motor.DecelPercent * 0.5;
+            double dbVelocity = 2 * m_Motor.TargetPosition / (1 + (1 - dbAccelPercent - dbDecelPercent)) * dbInterval;
+            m_Motor.MaxVel = dbVelocity;
+        }
+        /// <summary>
+        /// 2020.04.14 by chjung [ADD] 사다리꼴 위치 프로파일을 계산한다.
+        /// </summary>
+        public void CalculatePositionProfile(int nTickTime, double dbStartPosition)
         {
             if(false == m_bIsArrive)
             {
                 // 1. ms로 운영
                 double dbTickTime  = nTickTime * 0.001;
-                double dbEndTime   = nEndTime * 0.001;
+                double dbEndTime = m_nInterval * 0.001;
                 double dbAccelTime = m_Motor.AccelPercent * dbEndTime / 2;
                 double dbDecelTime = (2 - m_Motor.DecelPercent) * dbEndTime / 2;
                 double dbNextPosition = 0;
 
-                // 2. 사다리꼴 프로파일 생성
-                // 3. 위치 변환
+                // 2. 위치 계산
                 if (dbTickTime < dbAccelTime)
                 {
-                    dbNextPosition = (m_Motor.MaxAccel * dbTickTime * dbTickTime) * 0.5 + dbStartPosition;
+                    dbNextPosition = 0.5 * (m_Motor.MaxVel / dbAccelTime) * dbTickTime * dbTickTime + dbStartPosition;
                 }
                 else if (dbTickTime < dbDecelTime)
                 {
-                    dbNextPosition = (m_Motor.MaxAccel * dbAccelTime * dbAccelTime) * 0.5 + dbStartPosition
-                                    + m_Motor.MaxAccel * dbAccelTime * (dbTickTime - dbAccelTime);
+                    dbNextPosition = 0.5 * (m_Motor.MaxVel / dbAccelTime) * dbAccelTime * dbAccelTime + dbStartPosition
+                                     + m_Motor.MaxVel * (dbTickTime - dbAccelTime);
                 }
                 else
                 {
-                    dbNextPosition = (m_Motor.MaxAccel * dbAccelTime * dbAccelTime) * 0.5 + dbStartPosition
-                                    + m_Motor.MaxAccel * dbAccelTime * (dbDecelTime - dbAccelTime) 
-                                    + m_Motor.MaxAccel * dbAccelTime * (dbTickTime - dbDecelTime)
-                                    - 0.5 * (m_Motor.MaxAccel * dbAccelTime / (dbEndTime - dbDecelTime)) * (dbTickTime - dbDecelTime) * (dbTickTime - dbDecelTime);
+                    dbNextPosition = 0.5 * (m_Motor.MaxVel / dbAccelTime) * dbAccelTime * dbAccelTime + dbStartPosition
+                                     + m_Motor.MaxVel * (dbDecelTime - dbAccelTime)
+                                     + m_Motor.MaxVel * (dbTickTime - dbDecelTime)
+                                     - 0.5 * (m_Motor.MaxVel / (dbEndTime - dbDecelTime)) * (dbTickTime - dbDecelTime) * (dbTickTime - dbDecelTime);
                 }
-
+                if(m_dicOfPosition.ContainsKey(nTickTime))
+                {
+                    m_dicOfPosition.Clear();
+                    m_dicOfVelocity.Clear();
+                }
                 m_dicOfPosition.Add(nTickTime, dbNextPosition);
-                
-                
-
-                if (Math.Abs(dbNextPosition) >= Math.Abs(Motor.TargetPosition))
+          
+                if(nTickTime >= m_nInterval)
                 {
                     CalculateVelocityProfile();
                     m_bIsArrive = true;
                 }
-            }
-                   
+            }                  
         }
 
+        /// <summary>
+        /// 2020.04.14 by chjung [ADD] 위치값을 기반으로 속도 프로파일을 계산한다.
+        /// </summary>
         public void CalculateVelocityProfile()
         {
             double dbInterval = (double)0.001 * m_nInterval;
             if (dbInterval == 0) { return; }
-            for(int i = 1; i < m_dicOfPosition.Count; i++)
+            for(int i = 0; i < m_dicOfPosition.Count - 1; i++)
             {
-                double dbVelocity = (m_dicOfPosition[i] - m_dicOfPosition[i - 1]) / dbInterval; 
-                m_dicOfVelocity.Add(i - 1, dbVelocity);
+                double dbVelocity = (m_dicOfPosition[i + 1] - m_dicOfPosition[i]) / dbInterval; // m/ms
+                dbVelocity = dbVelocity * 1000; // m/s
+                m_dicOfVelocity.Add(i , dbVelocity);
             }      
         }
         

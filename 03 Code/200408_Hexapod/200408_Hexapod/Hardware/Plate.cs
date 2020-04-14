@@ -15,6 +15,7 @@ namespace _200408_Hexapod
         private double m_dbAngleOfOffset = 0;
         private double[] m_dbPosition    = { 0, 0, 0 };
         private double[] m_dbRotation    = { 0, 0, 0 };
+        private double[] m_dbToolOffset =  { 0, 0, 0 };
         Dictionary<int, double[]> m_dicOfJointVector = new Dictionary<int, double[]>();
         #endregion
 
@@ -25,6 +26,7 @@ namespace _200408_Hexapod
         public double AngleOfOffset { get { return m_dbAngleOfOffset; } set { m_dbAngleOfOffset = value; } }
         public double[] Position { get { return m_dbPosition; } set { m_dbPosition = value; } }
         public double[] Rotation { get { return m_dbRotation; } set { m_dbRotation = value; } }
+        public double[] ToolOffset { get { return m_dbToolOffset; } set { m_dbToolOffset = value; } }
         public Dictionary<int, double[]> dicOfJointVector { get { return m_dicOfJointVector; } }
         #endregion
 
@@ -102,6 +104,13 @@ namespace _200408_Hexapod
             }
         }
 
+        public void CalculateTranslationVector(double[] ar_dbTranslationVector)
+        {
+            for(int i = 0; i < m_dbPosition.Length; i++)
+            {
+                m_dbPosition[i] += ar_dbTranslationVector[i];
+            }
+        }
 
         #endregion
     }

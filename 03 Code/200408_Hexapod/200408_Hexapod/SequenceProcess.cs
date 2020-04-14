@@ -23,7 +23,8 @@ namespace _200408_Hexapod
         Coordinate_Control Control_Coordinate = null;
 
         int nTicktime = 0;
-        int nCycle     = 1000; // 주기
+        int nCycle     = 1000; // 주기(실 계산에 동기화 안됨)
+
         public SequenceProcess(Main_UI _Main_ui)
         {
             Control_Coordinate = new Coordinate_Control(_Main_ui ,new Hardware_Model(), new Coordinate_Model(), new Motion_Model());
@@ -39,27 +40,33 @@ namespace _200408_Hexapod
         {
             while(true)
             {
+                // 상태 값 체크       
                 switch(MainSequenceState)
                 {
                     case SequenceState.Init:
-                        // 하드웨어 설정 및 좌표계 생성
+                        // 하드웨어 설정 및 좌표계 생성, 모션 초기화
                         if (Control_Coordinate.IsSetAllHardWare)
                         {
                             MainSequenceState = SequenceState.Ready;
                             nTicktime = 0;
-                        }                                              
+                        }                      
                         break;
                     case SequenceState.Ready:
                         // 모션 생성
-                        Control_Coordinate.CalculateNextStepMotion(nTicktime, nCycle);
+                        Control_Coordinate.CalculateNextStepMotion(nTicktime);
+                        InitializeTickTime();
+
                         if (Control_Coordinate.IsMakeAllProfile)
                         {
                             MainSequenceState = SequenceState.Processing;
+                            nTicktime = 0;
                         }
-                        InitializeTickTime();
                         break;
                     case SequenceState.Processing:
-                        Console.WriteLine("test");
+                        if(false == Control_Coordinate.IsSetAllHardWare)
+                        {
+                            MainSequenceState = SequenceState.Init;
+                        }
                         break;
                     case SequenceState.Done:
                         break;

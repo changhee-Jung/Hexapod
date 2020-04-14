@@ -46,14 +46,16 @@ namespace _200408_Hexapod
             double dbToolOffset_X = Convert.ToDouble(txtToolOffset_X.Text.Trim());
             double dbToolOffset_Y = Convert.ToDouble(txtToolOffset_Y.Text.Trim());
             double dbToolOffset_Z = Convert.ToDouble(txtToolOffset_Z.Text.Trim());
+            double[] ar_dbToolOffset = { dbToolOffset_X, dbToolOffset_Y, dbToolOffset_Z };
 
             DataEventArgs DesignEventArgs = new DataEventArgs();
 
-            DesignEventArgs.Design.nNumberOfJoint = nNumberOfJoint;
-            DesignEventArgs.Design.dbRadius_Base = dbRadius_Base;
-            DesignEventArgs.Design.dbRadius_Upper = dbRadius_Upper;
-            DesignEventArgs.Design.dbAngleOfOffset_Base = dbAngleOfOffset_Base;
+            DesignEventArgs.Design.nNumberOfJoint        = nNumberOfJoint;
+            DesignEventArgs.Design.dbRadius_Base         = dbRadius_Base;
+            DesignEventArgs.Design.dbRadius_Upper        = dbRadius_Upper;
+            DesignEventArgs.Design.dbAngleOfOffset_Base  = dbAngleOfOffset_Base;
             DesignEventArgs.Design.dbAngleOfOffset_Upper = dbAngleOfOffset_Upper;
+            DesignEventArgs.Design.ar_dbToolOffset       = ar_dbToolOffset;
 
             double dbHeight = Convert.ToDouble(txtHeight.Text.Trim());
             DesignEventArgs.Design.dbHeight = dbHeight;
@@ -72,7 +74,7 @@ namespace _200408_Hexapod
             DataGridView_Vector.Columns[1].Name = "X";
             DataGridView_Vector.Columns[2].Name = "Y";
             DataGridView_Vector.Columns[3].Name = "Z";
-            DataGridView_Vector.Columns[4].Name = "Length";
+            DataGridView_Vector.Columns[4].Name = "Length(Absolute)";
         }
 
         private void btnCalculateVector_Click(object sender, EventArgs e)
@@ -129,10 +131,16 @@ namespace _200408_Hexapod
             }
         }
 
-        public void SetcomboSelectItem(string strName, int nIndex)
+        public void SetcomboSelectItem(List<string> listOfStringData)
         {
-            string strSetName = strName +": " + nIndex.ToString();
-            cboSelectGraph.Items.Add(strSetName);
+            cboSelectGraph.Items.Clear();
+
+            for (int i = 0; i < listOfStringData.Count; i++)
+            {
+                string strName = listOfStringData[i];
+                cboSelectGraph.Items.Add(strName);
+            }       
+          
         }
 
         private void cboSelectGraph_SelectedIndexChanged(object sender, EventArgs e)
@@ -160,7 +168,9 @@ namespace _200408_Hexapod
 
             Series series = chartLinearGraph.Series.Add(strName);
             series.ChartType = SeriesChartType.Line;
-
+            chartLinearGraph.ChartAreas[0].AxisX.Minimum = 0;
+            chartLinearGraph.ChartAreas[0].AxisX.Maximum = MotionData.Count;
+            chartLinearGraph.ChartAreas[0].AxisX.Interval = 100;
             foreach(KeyValuePair<int, double> Data in MotionData)
             {
                 series.Points.AddXY(Data.Key, Data.Value);
@@ -169,7 +179,23 @@ namespace _200408_Hexapod
 
         #endregion
 
-      
+        private void chartLinearGraph_MouseMove(object sender, MouseEventArgs e)
+        {
+            var source = sender as Chart;
+            HitTestResult result = source.HitTest(e.X, e.Y);
+            if (result.ChartElementType == ChartElementType.DataPoint && result.PointIndex != -1)
+            {
+                var xValue = source.Series[0].Points[result.PointIndex].XValue;
+                var yValue = source.Series[0].Points[result.PointIndex].YValues[0];
+                lblGraphData_X.Text = xValue.ToString();
+                lblGraphData_Y.Text = yValue.ToString();
+            }
+        }
+
+
+
+
+
 
     }
 }

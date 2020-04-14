@@ -31,7 +31,16 @@ namespace _200408_Hexapod
             m_dicOfMotor   = new Dictionary<int, Motor>();
             m_dicOfProfile = new Dictionary<int, Profile>();
         }
-        
+        public void InitializeState()
+        {
+            if (m_dicOfProfile.Count <= 0) { return; }
+
+            for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++ )
+            {
+                Profile SelectedProfile = m_dicOfProfile[nIndex];
+                SelectedProfile.bIsArrive = false;
+            }
+        }
         
         public Profile GetAxisProfile(int nIndex)
         {
@@ -50,8 +59,7 @@ namespace _200408_Hexapod
             m_dicOfMotor.Clear();
             m_dicOfProfile.Clear();
             for (int nIndex = 0; nIndex < nNumberOfAxis; nIndex++)
-            {
-                
+            {          
                 Motor motor = new Motor();
                 m_dicOfMotor.Add(nIndex, motor);
                 m_dicOfProfile.Add(nIndex, new Profile(motor));
@@ -64,17 +72,27 @@ namespace _200408_Hexapod
             {
                 Profile profile = m_dicOfProfile[nIndex];
                 Motor motor = profile.Motor;
-                motor.TargetPosition = TargetLengths[nIndex];
+                // 현재값 기반으로 이동해야할 위치 등록(절대값)
+                motor.TargetPosition = Math.Abs(TargetLengths[nIndex] - motor.Position);
                 
             }
         }
 
-        public void MakeMotionProfile(int nTicktime,int nEndtime)
+        public void CalculateRequiredVelocity()
+        {
+            for(int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
+            {
+                Profile profile = m_dicOfProfile[nIndex];
+                profile.CalculateRequiredVelocity();
+            }
+        }
+
+        public void MakeMotionProfile(int nTicktime)
         {
            for(int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
            {
                Profile profile = m_dicOfProfile[nIndex];
-               profile.CalculatePositionProfile(nTicktime, nEndtime, profile.Motor.Position);
+               profile.CalculatePositionProfile(nTicktime, profile.Motor.Position);
              
            }
         }

@@ -22,6 +22,7 @@ namespace _200408_Hexapod
         public double dbAngleOfOffset_Base;
         public double dbRadius_Upper;
         public double dbAngleOfOffset_Upper;
+        public double[] ar_dbToolOffset;
     }
     public struct TargetData
     {
@@ -76,6 +77,7 @@ namespace _200408_Hexapod
             m_bIsSetAllHardWare = false;
             m_bIsMakeAllProfile = false;
         }
+
         public void EventCallbackMethod(object sender, DataEventArgs e)
         {          
             switch (e.Callback)
@@ -98,15 +100,17 @@ namespace _200408_Hexapod
 
         private void SetHardware(DataEventArgs e)
         {
-            InitializeState(); // 이전 설정 초기화
+            InitializeState(); // 상태 설정 초기화
 
-            int nNumOfJoint = e.Design.nNumberOfJoint;
-            double dbRadius_Base = e.Design.dbRadius_Base;
-            double dbAngleOfOffset_Base = e.Design.dbAngleOfOffset_Base;
-            double dbRadius_Upper = e.Design.dbRadius_Upper;
+            int nNumOfJoint              = e.Design.nNumberOfJoint;
+            double dbRadius_Base         = e.Design.dbRadius_Base;
+            double dbAngleOfOffset_Base  = e.Design.dbAngleOfOffset_Base;
+            double dbRadius_Upper        = e.Design.dbRadius_Upper;
             double dbAngleOfOffset_Upper = e.Design.dbAngleOfOffset_Upper;
+            double[] ar_dbToolOffset     = e.Design.ar_dbToolOffset;
 
             Model_Hw.MakeHexapodPlate(nNumOfJoint, dbRadius_Base, dbAngleOfOffset_Base, dbRadius_Upper, dbAngleOfOffset_Upper);
+            Model_Hw.Plate_Upper.ToolOffset = ar_dbToolOffset;
 
             Model_Motion.NumberOfAxis = nNumOfJoint;
         }
@@ -119,29 +123,41 @@ namespace _200408_Hexapod
 
         private void SetTargetCoordinate(DataEventArgs e)
         {
-            // 여기서 ToolOffset 보상
-            Model_Hw.Plate_Upper.Position = e.Target.dbTargetPosition;
+            InitializeState();
+
+            Model_Hw.Plate_Upper.CalculateTranslationVector(e.Target.dbTargetPosition);
             Model_Hw.Plate_Upper.Rotation = e.Target.dbTargetRotation;
         }
 
         private void CalculateMovingVector()
         {
-            // 1. base to base point vector 계산
+            InitializeState();
+            // 1. base to Upper point height vector 계산
             Model_Coordinate.SetBasetoHeightVector(Model_Hw.Plate_Upper.Height);
-            Model_Coordinate.CalculateBaseToUpperPlateVector(Model_Hw.Plate_Base.dicOfJointVector);
-            // 2. baseJoint to UpperPlate Vector 계산
 
-            // 2. base에서 바라본 upper point vector 계산(회전 행렬) -> Upper값이 등록되었는지 확인
-            Model_Coordinate.CalculateBaseToUpperJoint(Model_Hw.Plate_Upper.Rotation, Model_Hw.Plate_Upper.dicOfJointVector);
+            // 2. baseJoint to UpperPlate Vector 위치 벡터 계산
+            Model_Coordinate.CalculateBaseToUpperPlateVector(Model_Hw.Plate_Base.dicOfJointVector);
+
+            // 3. base에서 바라본 Upperjoint vector 계산(회전 행렬)
+            Model_Coordinate.CalculateBaseToUpperJoint_Rotation(Model_Hw.Plate_Upper.Rotation, Model_Hw.Plate_Upper.dicOfJointVector);
+
+            // 4. base에서 바라본 BaseJoint와 UpperJoint 사이의 벡터 계산
             Model_Coordinate.CalculateBaseJointToUpperJointVector();
+
+            // 5.1 보상할 병진 행렬 계산(목표 위치)
             Model_Coordinate.CalculateTargetPostionTranslation(Model_Hw.Plate_Upper.Position);
-        
-            Model_Coordinate.CalculateActuatorVector();
+            // 5.2 보상할 병진 행렬 계산(ToolOffset) 위치
+            Model_Coordinate.CompensateToolOffsetVector(Model_Hw.Plate_Upper.Rotation, Model_Hw.Plate_Upper.ToolOffset);
+
+            // 6. 목표 엑추에이터 값 계산
+            Model_Coordinate.CalculateActuatorLengths();
+
+            // 7. 해당 엑추에이터에 위치 등록
             SetMotionData(Model_Coordinate.TargetLenghsOfActuator);
 
             m_bIsSetAllHardWare = true;
 
-            // 3. 최종 Actuator Vector 계산
+            // 8. 계산 값 표시
             DisplayActuatorVector();
         }
 
@@ -152,31 +168,41 @@ namespace _200408_Hexapod
 
         private void SetMotionData(Dictionary<int,double> TargetLengths)
         {
-            // 1. 현 위치를 기반으로 이동해야할 위치 계산.
+            // 프로파일 초기화
+            Model_Motion.InitializeState();   
+
+            // 1. 모션 축 생성 및 초기화
             Model_Motion.SetMotorAxis(TargetLengths.Count);
+
+            // 2. 목표 위치 설정
             Model_Motion.SetTargetPosition(TargetLengths);
 
+            // 3. 고정주기에 따른 요구속도 계산
+            Model_Motion.CalculateRequiredVelocity();
+
         }
-        public void CalculateNextStepMotion(int nTicktime, int nEndtime)
+
+        public void CalculateNextStepMotion(int nTicktime)
         {
             if (true == Model_Motion.CheckCompleteMotionProfiles())
             {
-                for (int nIndex = 0; nIndex < Model_Motion.NumberOfAxis; nIndex++ )
+                List<string> listOfProfileItemsName = new List<string>();
+                for (int nIndex = 0; nIndex < Model_Motion.NumberOfAxis; nIndex++)
                 {
-                    Profile profile = Model_Motion.GetAxisProfile(nIndex);
-                    Main_ui.Invoke(new Action(
-                                       delegate()
-                                       {
-                                           Main_ui.SetcomboSelectItem("Position", nIndex);
-                                           Main_ui.SetcomboSelectItem("Velocity", nIndex);
-                                       }));
+                    //Profile profile = Model_Motion.GetAxisProfile(nIndex);
+                    listOfProfileItemsName.Add("Position: " + nIndex.ToString());
+                    listOfProfileItemsName.Add("Velocity: " + nIndex.ToString());
                 }
-               
+                Main_ui.Invoke(new Action(
+                                     delegate()
+                                     {
+                                         Main_ui.SetcomboSelectItem(listOfProfileItemsName);
+                                     }));
                 m_bIsMakeAllProfile = true;
             }
             else
             {
-                Model_Motion.MakeMotionProfile(nTicktime, nEndtime);
+                Model_Motion.MakeMotionProfile(nTicktime);
                 
             }          
         }
@@ -188,7 +214,7 @@ namespace _200408_Hexapod
             Profile SelectedProfile = Model_Motion.GetAxisProfile(nIndex);
 
             Dictionary<int, double> dicOfGraphData = null;
-             string strSendName = null;
+            string strSendName = null;
 
             if (strName == "Position")
             {

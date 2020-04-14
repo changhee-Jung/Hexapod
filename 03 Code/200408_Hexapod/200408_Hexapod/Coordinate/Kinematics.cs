@@ -70,7 +70,7 @@ namespace _200408_Hexapod
             dbResult = Math.Sqrt(dbVector[0] * dbVector[0] + dbVector[1] * dbVector[1] + dbVector[2] *dbVector[2]);
             return dbResult;
         }
-
+ 
         #endregion
     }
 }
