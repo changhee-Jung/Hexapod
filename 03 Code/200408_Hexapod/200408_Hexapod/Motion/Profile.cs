@@ -10,17 +10,23 @@ namespace _200408_Hexapod
     {
         private bool m_bIsArrive     = false;
         private double m_dbMaxAccel = 0;
-        private double m_nInterval  = 1000;
+        private int m_nInterval  = 1000;
+        private int m_nCycletime  = 1000;
         private Motor m_Motor;
-        private Dictionary<int, double> m_dicOfPosition = new Dictionary<int, double>();
-        private Dictionary<int, double> m_dicOfVelocity = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicOfPosition   = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicOfVelocity   = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicOfAcceleration = new Dictionary<int, double>();
 
         public bool bIsArrive { get { return m_bIsArrive; } set { m_bIsArrive = value; } }
+        public int Interval { get { return m_nInterval; } set { m_nInterval = value; } }
+        public int CycleTime { get { return m_nCycletime; } set { m_nCycletime = value; } }
         public double MaxAccel { get { return m_dbMaxAccel; } set { m_dbMaxAccel = value; } }
-        public double Interval { get { return m_nInterval; } set { m_nInterval = value; } }
+
+        
         public Motor Motor { get { return m_Motor; } }
-        public Dictionary<int, double>  DicOfVelocity { get { return m_dicOfVelocity; } }
-        public Dictionary<int, double>  DicOfPosition { get { return m_dicOfPosition; } }
+        public Dictionary<int, double> DicOfPosition { get { return m_dicOfPosition; } }
+        public Dictionary<int, double> DicOfVelocity { get { return m_dicOfVelocity; } }
+        public Dictionary<int, double> DicOfAcceleration { get { return m_dicOfAcceleration; } }
 
         public Profile(Motor motor)
         {
@@ -29,12 +35,13 @@ namespace _200408_Hexapod
 
         public void CalculateRequiredVelocity()
         {
-            double dbInterval = m_nInterval * 0.001;
+            double dbEndtime = m_nCycletime * 0.001;
             double dbAccelPercent = m_Motor.AccelPercent * 0.5;
             double dbDecelPercent = m_Motor.DecelPercent * 0.5;
-            double dbVelocity = 2 * m_Motor.TargetPosition / (1 + (1 - dbAccelPercent - dbDecelPercent)) * dbInterval;
+            double dbVelocity = 2 * m_Motor.TargetPosition / ((1 + (1 - dbAccelPercent - dbDecelPercent)) * dbEndtime); //mm/s
             m_Motor.MaxVel = dbVelocity;
         }
+
         /// <summary>
         /// 2020.04.14 by chjung [ADD] 사다리꼴 위치 프로파일을 계산한다.
         /// </summary>
@@ -44,7 +51,7 @@ namespace _200408_Hexapod
             {
                 // 1. ms로 운영
                 double dbTickTime  = nTickTime * 0.001;
-                double dbEndTime = m_nInterval * 0.001;
+                double dbEndTime = m_nCycletime * 0.001;
                 double dbAccelTime = m_Motor.AccelPercent * dbEndTime / 2;
                 double dbDecelTime = (2 - m_Motor.DecelPercent) * dbEndTime / 2;
                 double dbNextPosition = 0;
@@ -72,10 +79,11 @@ namespace _200408_Hexapod
                     m_dicOfVelocity.Clear();
                 }
                 m_dicOfPosition.Add(nTickTime, dbNextPosition);
-          
-                if(nTickTime >= m_nInterval)
+
+                if (dbTickTime >= dbEndTime)
                 {
                     CalculateVelocityProfile();
+                    CalculateAccelerationProfile();
                     m_bIsArrive = true;
                 }
             }                  
@@ -90,10 +98,23 @@ namespace _200408_Hexapod
             if (dbInterval == 0) { return; }
             for(int i = 0; i < m_dicOfPosition.Count - 1; i++)
             {
-                double dbVelocity = (m_dicOfPosition[i + 1] - m_dicOfPosition[i]) / dbInterval; // m/ms
-                dbVelocity = dbVelocity * 1000; // m/s
+                double dbVelocity = (m_dicOfPosition[i + 1] - m_dicOfPosition[i]) / dbInterval; // mm/ms
+                dbVelocity = dbVelocity * 1000; // mm/s
                 m_dicOfVelocity.Add(i , dbVelocity);
             }      
+        }
+
+        public void CalculateAccelerationProfile()
+        {
+            double dbInterval = (double)0.001 * m_nInterval;
+            if (dbInterval == 0) { return; }
+            for (int i = 0; i < m_dicOfVelocity.Count - 1; i++)
+            {
+                double dbAcceleration = (m_dicOfVelocity[i + 1] - m_dicOfVelocity[i]) / dbInterval;
+                dbAcceleration = dbAcceleration * 1000; // mm/s^2
+                m_dicOfAcceleration.Add(i, dbAcceleration);
+            }      
+            
         }
         
     }

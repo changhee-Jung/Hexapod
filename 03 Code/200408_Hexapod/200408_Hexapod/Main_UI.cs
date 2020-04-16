@@ -26,7 +26,7 @@ namespace _200408_Hexapod
         #region 멤버
         public event EventHandler<DataEventArgs> UpdateData;
         public SequenceProcess Process;
-
+        public int m_nSelectedAxis = 0;
         private Dictionary<int, Series> m_dicOfGraphsPosition = new Dictionary<int, Series>();
         private Dictionary<int, Series> m_dicOfGraphsVelocity = new Dictionary<int, Series>();
         #endregion
@@ -131,66 +131,107 @@ namespace _200408_Hexapod
             }
         }
 
+   
+
+        public void InitializeChartControl()
+        {
+            chartLinearGraph.Series.Clear();
+            chartLinearGraph.ChartAreas.Clear();
+
+            chartLinearGraph.ChartAreas.Add("Position");
+            chartLinearGraph.ChartAreas.Add("Velocity");
+            chartLinearGraph.ChartAreas.Add("Acceleration");
+
+        }
+        public void DisplayMotionProfileData(int nIndex, string strName, Dictionary<int, double> MotionData)
+        {
+            string strAxisNumber = "L" + nIndex.ToString() + ": " + strName;
+
+            Series series = new Series(strAxisNumber);
+            series.ChartType = SeriesChartType.Line;
+         //   series.Legend    = "L" + nIndex.ToString();
+            series.ChartArea = strName;
+            chartLinearGraph.Series.Add(series);
+
+            chartLinearGraph.ChartAreas[strName].AxisX.Minimum = 0;
+            chartLinearGraph.ChartAreas[strName].AxisX.Maximum = MotionData.Count;
+            chartLinearGraph.ChartAreas[strName].AxisX.Interval = 100;
+
+          //  chartLinearGraph.Series[strAxisNumber].IsVisibleInLegend = true;
+                        
+            foreach (KeyValuePair<int, double> Data in MotionData)
+            {
+                series.Points.AddXY(Data.Key, Data.Value);
+            }
+
+        }
+
+
+        private void chartLinearGraph_MouseMove(object sender, MouseEventArgs e)
+        {
+            string strAxis = m_nSelectedAxis.ToString();
+            var source = sender as Chart;
+            HitTestResult result = source.HitTest(e.X, e.Y);
+  
+            foreach (Series series in source.Series)
+            {
+                if(true == series.Name.Contains(strAxis))
+                {
+                    if (result.ChartElementType == ChartElementType.DataPoint && result.PointIndex != -1)
+                    {
+
+                        if (result.PointIndex >= series.Points.Count) { return; }
+                        var xValue = series.Points[result.PointIndex].XValue;
+                        var yValue = series.Points[result.PointIndex].YValues[0];
+                        string[] strSplit = series.Name.Split(':');
+                        string strValue = strSplit[1].Trim();
+
+                        lblGraphData_X.Text = xValue.ToString();
+                        
+                        switch(strValue)
+                        {
+                            case "Position":
+                                lblGraphData_Pos.Text = yValue.ToString();
+                                break;
+                            case "Velocity":
+                                lblGraphData_Vel.Text = yValue.ToString();
+                                break;
+                            case "Acceleration":
+                                lblGraphData_Accel.Text = yValue.ToString();
+                                break;
+                        }
+                        
+                    }
+          
+                }
+            }
+        }
+
+
         public void SetcomboSelectItem(List<string> listOfStringData)
         {
-            cboSelectGraph.Items.Clear();
+            cboAxis.Items.Clear();
 
             for (int i = 0; i < listOfStringData.Count; i++)
             {
                 string strName = listOfStringData[i];
-                cboSelectGraph.Items.Add(strName);
-            }       
-          
-        }
-
-        private void cboSelectGraph_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            string strName = cboSelectGraph.SelectedItem.ToString();
-
-            string[] ar_strName = strName.Split(':');
-            string strValue = ar_strName[0].Trim() ;
-            int nIndex = Convert.ToInt16(ar_strName[1].Trim());
-
-            DataEventArgs CallGraphData = new DataEventArgs();           
-            CallGraphData.strName = strValue;
-            CallGraphData.nIndex  = nIndex;
-
-            CallGraphData.Callback = CallBackMethod.CallMotionProfileData;
-
-            if (UpdateData != null)
-                UpdateData.Invoke(this, CallGraphData);
-        
-        }
-
-        public void DisplayMotionProfileData(string strName, Dictionary<int, double> MotionData)
-        {
-            chartLinearGraph.Series.Clear();
-
-            Series series = chartLinearGraph.Series.Add(strName);
-            series.ChartType = SeriesChartType.Line;
-            chartLinearGraph.ChartAreas[0].AxisX.Minimum = 0;
-            chartLinearGraph.ChartAreas[0].AxisX.Maximum = MotionData.Count;
-            chartLinearGraph.ChartAreas[0].AxisX.Interval = 100;
-            foreach(KeyValuePair<int, double> Data in MotionData)
-            {
-                series.Points.AddXY(Data.Key, Data.Value);
+                cboAxis.Items.Add(strName);
             }
+
         }
+
+        private void cboAxis_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string strName = cboAxis.SelectedItem.ToString();
+            string[] strSplit = strName.Split(':');
+            m_nSelectedAxis = Convert.ToInt16(strSplit[1]);
+        }
+
+      
 
         #endregion
 
-        private void chartLinearGraph_MouseMove(object sender, MouseEventArgs e)
-        {
-            var source = sender as Chart;
-            HitTestResult result = source.HitTest(e.X, e.Y);
-            if (result.ChartElementType == ChartElementType.DataPoint && result.PointIndex != -1)
-            {
-                var xValue = source.Series[0].Points[result.PointIndex].XValue;
-                var yValue = source.Series[0].Points[result.PointIndex].YValues[0];
-                lblGraphData_X.Text = xValue.ToString();
-                lblGraphData_Y.Text = yValue.ToString();
-            }
-        }
+    
 
 
 

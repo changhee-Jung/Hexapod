@@ -22,8 +22,8 @@ namespace _200408_Hexapod
         Main_UI Main_ui = null;
         Coordinate_Control Control_Coordinate = null;
 
-        int nTicktime = 0;
-        int nCycle     = 1000; // 주기(실 계산에 동기화 안됨)
+        int nTicktime  =  0;
+        int nCycleTime = 1000; 
 
         public SequenceProcess(Main_UI _Main_ui)
         {
@@ -53,7 +53,7 @@ namespace _200408_Hexapod
                         break;
                     case SequenceState.Ready:
                         // 모션 생성
-                        Control_Coordinate.CalculateNextStepMotion(nTicktime);
+                        Control_Coordinate.CalculateNextStepMotion(nTicktime, nCycleTime);
                         InitializeTickTime();
 
                         if (Control_Coordinate.IsMakeAllProfile)
@@ -83,7 +83,7 @@ namespace _200408_Hexapod
 
         private void InitializeTickTime()
         {
-            if (nTicktime > nCycle)
+            if (nTicktime > nCycleTime)
             {
                 nTicktime = 0;
             }             

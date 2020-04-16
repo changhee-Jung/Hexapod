@@ -8,7 +8,13 @@ namespace _200408_Hexapod
 {
     class Hardware_Model
     {
-
+        public enum HardwareState
+        {
+            None,
+            Setcompleted_Base,
+            SetCompleted_Upper,
+            Actionable
+        }
         #region 생성자
         public Hardware_Model()
         {
@@ -19,6 +25,7 @@ namespace _200408_Hexapod
         #region 멤버
         Plate m_Plate_Base;
         Plate m_Plate_Upper;
+        HardwareState m_HardwareState = HardwareState.None;
         double[] m_dbToolOffset;
         #endregion
 
@@ -26,7 +33,7 @@ namespace _200408_Hexapod
         public Plate Plate_Base { get { return m_Plate_Base; } }
         public Plate Plate_Upper { get { return m_Plate_Upper; } }
         public double[] ToolOffset { get { return m_dbToolOffset; } set { m_dbToolOffset = value; } }
-
+        public HardwareState State { get { return m_HardwareState; } set { m_HardwareState = value; } }
         #endregion
 
         #region 메소드
@@ -38,9 +45,11 @@ namespace _200408_Hexapod
 
             m_Plate_Base = new Plate(nNumOfJoint, dbRadius_Base, dbAngleOfOffset_Base);
             m_Plate_Base.MakeJointVector(false);
+            m_HardwareState = HardwareState.Setcompleted_Base;
 
             m_Plate_Upper = new Plate(nNumOfJoint, dbRadius_Upper, dbAngleOfOffset_Upper);
             m_Plate_Upper.MakeJointVector(true);
+            m_HardwareState = HardwareState.SetCompleted_Upper;
 
         }
         #endregion

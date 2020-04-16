@@ -13,6 +13,7 @@ namespace _200408_Hexapod
 
         double[] dbTargetLength;
         int m_nNumberOfAxis = 0;
+        int m_nCycleTime    = 0;
         bool m_bIsSuccess = false;
         Dictionary<int, Motor> m_dicOfMotor;
         Dictionary<int, Profile> m_dicOfProfile;
@@ -31,6 +32,8 @@ namespace _200408_Hexapod
             m_dicOfMotor   = new Dictionary<int, Motor>();
             m_dicOfProfile = new Dictionary<int, Profile>();
         }
+
+
         public void InitializeState()
         {
             if (m_dicOfProfile.Count <= 0) { return; }
@@ -42,6 +45,21 @@ namespace _200408_Hexapod
             }
         }
         
+        public void SetCycleTime(int nCycleTime)
+        {
+            if (m_nCycleTime != nCycleTime)
+            {
+                m_nCycleTime = nCycleTime;
+                for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
+                {
+                    Profile profile = m_dicOfProfile[nIndex];
+                    profile.CycleTime = nCycleTime;
+                    profile.CalculateRequiredVelocity();
+
+                }
+            }
+           
+        }
         public Profile GetAxisProfile(int nIndex)
         {
             Profile returnProfile = null;

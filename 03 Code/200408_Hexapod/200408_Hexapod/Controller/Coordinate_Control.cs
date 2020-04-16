@@ -12,7 +12,6 @@ namespace _200408_Hexapod
         SetHardWareData,
         SetTargetCoordinate,
         CalculateMovingVector,
-        CallMotionProfileData
     }
     public struct DesignData
     {
@@ -92,9 +91,6 @@ namespace _200408_Hexapod
                 case CallBackMethod.CalculateMovingVector:
                     CalculateMovingVector();
                     break;
-                case CallBackMethod.CallMotionProfileData:
-                    CallMotionProfileData(e);
-                    break;
             }
         }
 
@@ -117,14 +113,15 @@ namespace _200408_Hexapod
 
         private void SetHeightVector(DataEventArgs e)
         {
-            double dbHeight             = e.Design.dbHeight;
+            double dbHeight                 = e.Design.dbHeight;
             Model_Hw.Plate_Upper.Height = dbHeight;
+            Model_Hw.State = Hardware_Model.HardwareState.Actionable;
         }
 
         private void SetTargetCoordinate(DataEventArgs e)
         {
             InitializeState();
-
+            if (Model_Hw.State != Hardware_Model.HardwareState.Actionable) { return; }
             Model_Hw.Plate_Upper.CalculateTranslationVector(e.Target.dbTargetPosition);
             Model_Hw.Plate_Upper.Rotation = e.Target.dbTargetRotation;
         }
@@ -132,6 +129,7 @@ namespace _200408_Hexapod
         private void CalculateMovingVector()
         {
             InitializeState();
+            if (Model_Hw.State != Hardware_Model.HardwareState.Actionable) { return; }
             // 1. base to Upper point height vector 계산
             Model_Coordinate.SetBasetoHeightVector(Model_Hw.Plate_Upper.Height);
 
@@ -182,53 +180,38 @@ namespace _200408_Hexapod
 
         }
 
-        public void CalculateNextStepMotion(int nTicktime)
+        public void CalculateNextStepMotion(int nTicktime, int nCycleTime)
         {
             if (true == Model_Motion.CheckCompleteMotionProfiles())
             {
                 List<string> listOfProfileItemsName = new List<string>();
+                Main_ui.Invoke(new Action(
+                                 delegate()
+                                 {
+                                     Main_ui.InitializeChartControl();
+                                 }));
                 for (int nIndex = 0; nIndex < Model_Motion.NumberOfAxis; nIndex++)
                 {
-                    //Profile profile = Model_Motion.GetAxisProfile(nIndex);
-                    listOfProfileItemsName.Add("Position: " + nIndex.ToString());
-                    listOfProfileItemsName.Add("Velocity: " + nIndex.ToString());
-                }
-                Main_ui.Invoke(new Action(
-                                     delegate()
-                                     {
-                                         Main_ui.SetcomboSelectItem(listOfProfileItemsName);
-                                     }));
+                    listOfProfileItemsName.Add("Axis: " + nIndex.ToString());
+                    Profile profile = Model_Motion.GetAxisProfile(nIndex);
+
+                    Main_ui.Invoke(new Action(
+                                   delegate()
+                                   {
+                                       Main_ui.DisplayMotionProfileData(nIndex,"Position", profile.DicOfPosition);
+                                       Main_ui.DisplayMotionProfileData(nIndex, "Velocity", profile.DicOfVelocity);
+                                       Main_ui.DisplayMotionProfileData(nIndex, "Acceleration", profile.DicOfAcceleration);
+                                       Main_ui.SetcomboSelectItem(listOfProfileItemsName);
+                                   }));
+                }              
                 m_bIsMakeAllProfile = true;
             }
             else
             {
+                Model_Motion.SetCycleTime(nCycleTime);
                 Model_Motion.MakeMotionProfile(nTicktime);
                 
             }          
-        }
-
-        public void CallMotionProfileData(DataEventArgs e)
-        {
-            string strName = e.strName;
-            int nIndex = e.nIndex;
-            Profile SelectedProfile = Model_Motion.GetAxisProfile(nIndex);
-
-            Dictionary<int, double> dicOfGraphData = null;
-            string strSendName = null;
-
-            if (strName == "Position")
-            {
-                strSendName = strName + ": " + nIndex.ToString();
-                dicOfGraphData = SelectedProfile.DicOfPosition;
-                
-            }
-            else if(strName == "Velocity")
-            {
-                strSendName = strName + ": " + nIndex.ToString();
-                dicOfGraphData = SelectedProfile.DicOfVelocity;
-
-            }
-            Main_ui.DisplayMotionProfileData(strSendName, dicOfGraphData);
         }
         
         #endregion
