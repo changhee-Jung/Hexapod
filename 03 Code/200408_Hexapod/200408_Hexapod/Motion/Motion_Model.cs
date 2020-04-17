@@ -9,19 +9,19 @@ namespace _200408_Hexapod
 
     class Motion_Model
     {
+
         #region 멤버
 
         double[] dbTargetLength;
         int m_nNumberOfAxis = 0;
         int m_nCycleTime    = 0;
-        bool m_bIsSuccess = false;
+        bool m_bIsSuccess          = false;      
         Dictionary<int, Motor> m_dicOfMotor;
         Dictionary<int, Profile> m_dicOfProfile;
         #endregion
         
         #region 속성
 
-        public bool IsSuccess { get { return m_bIsSuccess; } }
         public int NumberOfAxis { get { return m_nNumberOfAxis; } set { m_nNumberOfAxis = value; } }
         #endregion
 
@@ -50,16 +50,15 @@ namespace _200408_Hexapod
             if (m_nCycleTime != nCycleTime)
             {
                 m_nCycleTime = nCycleTime;
+
                 for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
                 {
                     Profile profile = m_dicOfProfile[nIndex];
                     profile.CycleTime = nCycleTime;
-                    profile.CalculateRequiredVelocity();
-
                 }
-            }
-           
+            }    
         }
+
         public Profile GetAxisProfile(int nIndex)
         {
             Profile returnProfile = null;
@@ -97,8 +96,8 @@ namespace _200408_Hexapod
         }
 
         public void CalculateRequiredVelocity()
-        {
-            for(int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
+        {         
+            for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
             {
                 Profile profile = m_dicOfProfile[nIndex];
                 profile.CalculateRequiredVelocity();

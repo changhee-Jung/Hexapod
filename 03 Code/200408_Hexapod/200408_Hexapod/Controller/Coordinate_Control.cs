@@ -175,9 +175,6 @@ namespace _200408_Hexapod
             // 2. 목표 위치 설정
             Model_Motion.SetTargetPosition(TargetLengths);
 
-            // 3. 고정주기에 따른 요구속도 계산
-            Model_Motion.CalculateRequiredVelocity();
-
         }
 
         public void CalculateNextStepMotion(int nTicktime, int nCycleTime)
@@ -199,7 +196,7 @@ namespace _200408_Hexapod
                                    delegate()
                                    {
                                        Main_ui.DisplayMotionProfileData(nIndex,"Position", profile.DicOfPosition);
-                                       Main_ui.DisplayMotionProfileData(nIndex, "Velocity", profile.DicOfVelocity);
+                                       Main_ui.DisplayMotionProfileData(nIndex, "Velocity", profile.DicOfVelocity_MovingAverage); //200417 확인 완료
                                        Main_ui.DisplayMotionProfileData(nIndex, "Acceleration", profile.DicOfAcceleration);
                                        Main_ui.SetcomboSelectItem(listOfProfileItemsName);
                                    }));
@@ -209,8 +206,8 @@ namespace _200408_Hexapod
             else
             {
                 Model_Motion.SetCycleTime(nCycleTime);
-                Model_Motion.MakeMotionProfile(nTicktime);
-                
+                Model_Motion.CalculateRequiredVelocity();
+                Model_Motion.MakeMotionProfile(nTicktime);              
             }          
         }
         

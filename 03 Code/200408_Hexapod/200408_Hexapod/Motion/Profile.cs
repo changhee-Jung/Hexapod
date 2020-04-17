@@ -10,23 +10,29 @@ namespace _200408_Hexapod
     {
         private bool m_bIsArrive     = false;
         private double m_dbMaxAccel = 0;
-        private int m_nInterval  = 1000;
-        private int m_nCycletime  = 1000;
+        private int m_nInterval     = 1000;
+        private int m_nCycletime    = 1000;
         private Motor m_Motor;
-        private Dictionary<int, double> m_dicOfPosition   = new Dictionary<int, double>();
-        private Dictionary<int, double> m_dicOfVelocity   = new Dictionary<int, double>();
-        private Dictionary<int, double> m_dicOfAcceleration = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicOfPosition               = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicOfVelocity               = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicOfAcceleration           = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicOfVelocity_MovingAverage = new Dictionary<int, double>();
 
         public bool bIsArrive { get { return m_bIsArrive; } set { m_bIsArrive = value; } }
         public int Interval { get { return m_nInterval; } set { m_nInterval = value; } }
         public int CycleTime { get { return m_nCycletime; } set { m_nCycletime = value; } }
         public double MaxAccel { get { return m_dbMaxAccel; } set { m_dbMaxAccel = value; } }
-
-        
+  
         public Motor Motor { get { return m_Motor; } }
         public Dictionary<int, double> DicOfPosition { get { return m_dicOfPosition; } }
         public Dictionary<int, double> DicOfVelocity { get { return m_dicOfVelocity; } }
         public Dictionary<int, double> DicOfAcceleration { get { return m_dicOfAcceleration; } }
+        public Dictionary<int, double> DicOfVelocity_MovingAverage { get { return m_dicOfVelocity_MovingAverage; } }
+
+
+
+        private double[] m_ardbVelocity = new double[200];
+            
 
         public Profile(Motor motor)
         {
@@ -84,13 +90,14 @@ namespace _200408_Hexapod
                 {
                     CalculateVelocityProfile();
                     CalculateAccelerationProfile();
+                    CalculateVelocityProfile_MovingAverage();
                     m_bIsArrive = true;
                 }
             }                  
         }
 
         /// <summary>
-        /// 2020.04.14 by chjung [ADD] 위치값을 기반으로 속도 프로파일을 계산한다.
+        /// 2020.04.14 by chjung [ADD] 위치값을 기반으로 속도 프로파일을 생성한다.
         /// </summary>
         public void CalculateVelocityProfile()
         {
@@ -103,7 +110,9 @@ namespace _200408_Hexapod
                 m_dicOfVelocity.Add(i , dbVelocity);
             }      
         }
-
+        /// <summary>
+        /// 2020.04.16 by chjung [ADD] 위치 값을 기반으로 가속도 프로파일을 생성한다.
+        /// </summary>
         public void CalculateAccelerationProfile()
         {
             double dbInterval = (double)0.001 * m_nInterval;
@@ -116,6 +125,48 @@ namespace _200408_Hexapod
             }      
             
         }
+        /// <summary>
+        /// 2020.04.17 by chjung [ADD] 이동 평균 속도 프로파일을 생성한다.
+        /// </summary>
+        public void CalculateVelocityProfile_MovingAverage()
+        {
+            if (m_dicOfVelocity.Count <= 0 || m_ardbVelocity.Length <= 0) { return; }
+            bool bIsCompletedCalculation = false;
+            int nIndex = 0;
+
+            while(false == bIsCompletedCalculation)
+            {
+                if(nIndex < m_ardbVelocity.Length)
+                {
+                    m_ardbVelocity[nIndex] = m_dicOfVelocity[nIndex];
+                }
+                else
+                {
+                    for (int nIndexOfArray = 0; nIndexOfArray < m_ardbVelocity.Length - 1; nIndexOfArray++)
+                    {
+                        m_ardbVelocity[nIndexOfArray] = m_ardbVelocity[nIndexOfArray + 1];
+                    }
+                    if(true == m_dicOfVelocity.ContainsKey(nIndex))
+                    {
+                        m_ardbVelocity[m_ardbVelocity.Length - 1] = m_dicOfVelocity[nIndex];
+                    }
+                    else
+                    {
+                        m_ardbVelocity[m_ardbVelocity.Length - 1] = 0;
+                    }
+                }
+                double dbNextVelocity = 0;
+                foreach (double dbData in m_ardbVelocity)
+                {
+                    dbNextVelocity += dbData / m_ardbVelocity.Length;
+                }
+                m_dicOfVelocity_MovingAverage.Add(nIndex, dbNextVelocity);
+
+                if(dbNextVelocity <= 0) { break;}
+                nIndex++;
+            }
+        }
+      
         
     }
 }
