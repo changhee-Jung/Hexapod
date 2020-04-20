@@ -195,9 +195,9 @@ namespace _200408_Hexapod
                     Main_ui.Invoke(new Action(
                                    delegate()
                                    {
-                                       Main_ui.DisplayMotionProfileData(nIndex,"Position", profile.DicOfPosition);
-                                       Main_ui.DisplayMotionProfileData(nIndex, "Velocity", profile.DicOfVelocity_MovingAverage); //200417 확인 완료
-                                       Main_ui.DisplayMotionProfileData(nIndex, "Acceleration", profile.DicOfAcceleration);
+                                       Main_ui.DisplayMotionProfileData(nIndex,"Position", profile.DicOfPosition_MovingAverage);
+                                       Main_ui.DisplayMotionProfileData(nIndex, "Velocity", profile.DicOfVelocity_MovingAverage); 
+                                       Main_ui.DisplayMotionProfileData(nIndex, "Acceleration", profile.DicAcceleration_MovingAverage);
                                        Main_ui.SetcomboSelectItem(listOfProfileItemsName);
                                    }));
                 }              

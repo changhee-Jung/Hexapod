@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
 namespace _200408_Hexapod
 {
     class Profile
@@ -17,6 +17,8 @@ namespace _200408_Hexapod
         private Dictionary<int, double> m_dicOfVelocity               = new Dictionary<int, double>();
         private Dictionary<int, double> m_dicOfAcceleration           = new Dictionary<int, double>();
         private Dictionary<int, double> m_dicOfVelocity_MovingAverage = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicPosition_MovingAverage   = new Dictionary<int, double>();
+        private Dictionary<int, double> m_dicAcceleration_MovingAverage = new Dictionary<int, double>();
 
         public bool bIsArrive { get { return m_bIsArrive; } set { m_bIsArrive = value; } }
         public int Interval { get { return m_nInterval; } set { m_nInterval = value; } }
@@ -28,10 +30,11 @@ namespace _200408_Hexapod
         public Dictionary<int, double> DicOfVelocity { get { return m_dicOfVelocity; } }
         public Dictionary<int, double> DicOfAcceleration { get { return m_dicOfAcceleration; } }
         public Dictionary<int, double> DicOfVelocity_MovingAverage { get { return m_dicOfVelocity_MovingAverage; } }
+        public Dictionary<int, double> DicOfPosition_MovingAverage { get { return m_dicPosition_MovingAverage; } }
+        public Dictionary<int, double> DicAcceleration_MovingAverage { get { return m_dicAcceleration_MovingAverage; } }
 
 
-
-        private double[] m_ardbVelocity = new double[200];
+        private double[] m_ardbVelocity = new double[300];
             
 
         public Profile(Motor motor)
@@ -79,7 +82,7 @@ namespace _200408_Hexapod
                                      + m_Motor.MaxVel * (dbTickTime - dbDecelTime)
                                      - 0.5 * (m_Motor.MaxVel / (dbEndTime - dbDecelTime)) * (dbTickTime - dbDecelTime) * (dbTickTime - dbDecelTime);
                 }
-                if(m_dicOfPosition.ContainsKey(nTickTime))
+                if (m_dicOfPosition.ContainsKey(nTickTime))
                 {
                     m_dicOfPosition.Clear();
                     m_dicOfVelocity.Clear();
@@ -88,9 +91,17 @@ namespace _200408_Hexapod
 
                 if (dbTickTime >= dbEndTime)
                 {
+                    // 사다리꼴 프로파일 계산
                     CalculateVelocityProfile();
                     CalculateAccelerationProfile();
+                    // 이동 평균 사다리꼴 프로파일 계산
                     CalculateVelocityProfile_MovingAverage();
+                    CalculatePositionProfile_MovingAverage();
+                    CalculateAccelerationProfile_MovingAverage();
+                    // 소숫점 자리 계산
+                    CalculateDigitData(m_dicPosition_MovingAverage);
+                    CalculateDigitData(m_dicOfVelocity_MovingAverage);
+                    CalculateDigitData(m_dicAcceleration_MovingAverage);
                     m_bIsArrive = true;
                 }
             }                  
@@ -131,6 +142,7 @@ namespace _200408_Hexapod
         public void CalculateVelocityProfile_MovingAverage()
         {
             if (m_dicOfVelocity.Count <= 0 || m_ardbVelocity.Length <= 0) { return; }
+            if (m_dicOfVelocity.Count <= m_ardbVelocity.Length) { return; }
             bool bIsCompletedCalculation = false;
             int nIndex = 0;
 
@@ -164,6 +176,45 @@ namespace _200408_Hexapod
 
                 if(dbNextVelocity <= 0) { break;}
                 nIndex++;
+            }
+        }
+        /// <summary>
+        /// 2020.04.20 by chjung [ADD] 이동 평균 속도 프로파일을 통해 위치 프로파일을 계산한다.
+        /// </summary>
+        public void CalculatePositionProfile_MovingAverage()
+        {
+            double dbInterval = (double)0.001 * m_nInterval;
+            if (dbInterval == 0) { return; }
+            double dbPosition_MovingAverage = 0;
+            for (int i = 0; i < m_dicOfVelocity_MovingAverage.Count - 1; i++)
+            {
+                dbPosition_MovingAverage += 0.001 * (m_dicOfVelocity_MovingAverage[i] + m_dicOfVelocity_MovingAverage[i + 1]) * 0.5 * dbInterval;
+                m_dicPosition_MovingAverage.Add(i, dbPosition_MovingAverage);
+            }      
+        }
+        /// <summary>
+        /// 2020.04.20 by chjung [ADD] 이동 평균 속도 프로파일을 통해 가속도 프로파일을 계산한다.
+        /// </summary>
+        public void CalculateAccelerationProfile_MovingAverage()
+        {
+            double dbInterval = (double)0.001 * m_nInterval;
+            if (dbInterval == 0) { return; }
+            m_dicAcceleration_MovingAverage[0] = 0;
+            for (int i = 1; i < m_dicOfVelocity_MovingAverage.Count; i++)
+            {
+                double dbAcceleration = (m_dicOfVelocity_MovingAverage[i] - m_dicOfVelocity_MovingAverage[i - 1]) / dbInterval;
+                dbAcceleration = dbAcceleration * 1000; // mm/s^2
+                m_dicAcceleration_MovingAverage.Add(i, dbAcceleration);
+            }      
+        }
+
+        public void CalculateDigitData(Dictionary<int,double> DicOfData)
+        {
+            if (DicOfData.Count <= 0) { return; }
+
+            for(int nIndex = 0; nIndex < DicOfData.Count - 1; nIndex++)
+            {
+                DicOfData[nIndex] = Math.Truncate(DicOfData[nIndex] * 1000) * 0.001;
             }
         }
       

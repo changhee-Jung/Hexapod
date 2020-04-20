@@ -43,12 +43,12 @@ namespace _200408_Hexapod
         public void MakeHexapodPlate(int nNumOfJoint, double dbRadius_Base, double dbAngleOfOffset_Base, double dbRadius_Upper, double dbAngleOfOffset_Upper)
         {
 
-            m_Plate_Base = new Plate(nNumOfJoint, dbRadius_Base, dbAngleOfOffset_Base);
-            m_Plate_Base.MakeJointVector(false);
+            m_Plate_Base = new Plate(Plate.PlateSettings.Base,nNumOfJoint, dbRadius_Base, dbAngleOfOffset_Base);
+            m_Plate_Base.MakeJointVector();
             m_HardwareState = HardwareState.Setcompleted_Base;
 
-            m_Plate_Upper = new Plate(nNumOfJoint, dbRadius_Upper, dbAngleOfOffset_Upper);
-            m_Plate_Upper.MakeJointVector(true);
+            m_Plate_Upper = new Plate(Plate.PlateSettings.Upper,nNumOfJoint, dbRadius_Upper, dbAngleOfOffset_Upper);
+            m_Plate_Upper.MakeJointVector();
             m_HardwareState = HardwareState.SetCompleted_Upper;
 
         }

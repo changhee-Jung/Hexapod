@@ -18,7 +18,7 @@ namespace _200408_Hexapod
 
         #region 멤버
         private double[] m_dbBasetoHeightVector = { 0, 0, 0 };
-        private double[] m_TargetPositionVector = { 0, 0, 0 };
+        private double[] m_dbTargetPositionVector = { 0, 0, 0 };
         private double[] m_dbToolOffsetVector   = { 0, 0, 0 };
         Dictionary<int, double> m_dicOfTargetLength                          = new Dictionary<int, double>();
         Dictionary<int, double[]> m_dicOfBaseJointToUpperPlateVector         = new Dictionary<int, double[]>();
@@ -111,7 +111,7 @@ namespace _200408_Hexapod
 
             for(int i = 0; i < m_dicOfBaseJointToUpperJointVector.Count; i++)
             {
-                m_dicOfTargetLength[i] = Hexapod_Kinematics.CalculateNorm(m_dicOfBaseToTargetVector[i]);
+                m_dicOfTargetLength[i] = Math.Truncate(Hexapod_Kinematics.CalculateNorm(m_dicOfBaseToTargetVector[i]) * 1000) * 0.001;
             }
         }
 

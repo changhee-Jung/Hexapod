@@ -30,7 +30,6 @@
         {
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.label13 = new System.Windows.Forms.Label();
-            this.txtNumOfJoint = new System.Windows.Forms.TextBox();
             this.btnMakeHardware = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtAngleOfOffset_Upper = new System.Windows.Forms.TextBox();
@@ -80,6 +79,7 @@
             this.cboAxis = new System.Windows.Forms.ComboBox();
             this.lblGraphData_Accel = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
+            this.cboNumOfJoint = new System.Windows.Forms.ComboBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView_Vector)).BeginInit();
@@ -97,14 +97,6 @@
             this.label13.Size = new System.Drawing.Size(111, 12);
             this.label13.TabIndex = 46;
             this.label13.Text = "Number Of Joints :";
-            // 
-            // txtNumOfJoint
-            // 
-            this.txtNumOfJoint.Location = new System.Drawing.Point(156, 199);
-            this.txtNumOfJoint.Name = "txtNumOfJoint";
-            this.txtNumOfJoint.Size = new System.Drawing.Size(50, 21);
-            this.txtNumOfJoint.TabIndex = 45;
-            this.txtNumOfJoint.Text = "6";
             // 
             // btnMakeHardware
             // 
@@ -259,12 +251,12 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.cboNumOfJoint);
             this.groupBox3.Controls.Add(this.groupBox5);
             this.groupBox3.Controls.Add(this.label2);
             this.groupBox3.Controls.Add(this.txtHeight);
             this.groupBox3.Controls.Add(this.btnMakeHardware);
             this.groupBox3.Controls.Add(this.label13);
-            this.groupBox3.Controls.Add(this.txtNumOfJoint);
             this.groupBox3.Controls.Add(this.groupBox2);
             this.groupBox3.Controls.Add(this.groupBox1);
             this.groupBox3.Location = new System.Drawing.Point(2, 5);
@@ -576,6 +568,18 @@
             this.label22.TabIndex = 62;
             this.label22.Text = "Accel :";
             // 
+            // cboNumOfJoint
+            // 
+            this.cboNumOfJoint.FormattingEnabled = true;
+            this.cboNumOfJoint.Items.AddRange(new object[] {
+            "3",
+            "6"});
+            this.cboNumOfJoint.Location = new System.Drawing.Point(156, 200);
+            this.cboNumOfJoint.Name = "cboNumOfJoint";
+            this.cboNumOfJoint.Size = new System.Drawing.Size(50, 20);
+            this.cboNumOfJoint.TabIndex = 60;
+            this.cboNumOfJoint.Text = "6";
+            // 
             // Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -619,7 +623,6 @@
         #endregion
 
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.TextBox txtNumOfJoint;
         private System.Windows.Forms.Button btnMakeHardware;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox txtAngleOfOffset_Upper;
@@ -669,6 +672,7 @@
         private System.Windows.Forms.ComboBox cboAxis;
         private System.Windows.Forms.Label lblGraphData_Accel;
         private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.ComboBox cboNumOfJoint;
     }
 }
 

@@ -23,9 +23,9 @@ namespace _200408_Hexapod
         public double[] CalculateRotateEulerAngle(double[] dbRotation, double[] dbVector)
         {
             double[] dbResult = { 0, 0, 0 };
-            double dbRoll  = dbRotation[0];
-            double dbPitch = dbRotation[1];
-            double dbYaw   = dbRotation[2];
+            double dbRoll     = dbRotation[0];
+            double dbPitch    = dbRotation[1];
+            double dbYaw      = dbRotation[2];
             
             if (dbVector.Length == 3)
             {

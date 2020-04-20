@@ -34,7 +34,7 @@ namespace _200408_Hexapod
         #region 메소드
         private void btnMakeHardware_Click(object sender, EventArgs e)
         {
-            int nNumberOfJoint = Convert.ToInt16(txtNumOfJoint.Text.Trim());
+            int nNumberOfJoint = Convert.ToInt16(cboNumOfJoint.Text.Trim()); // 이를 바꿔야함
             int nDegreeOfOffset_Base = Convert.ToInt32(txtAngleOfOffset_Base.Text.Trim());
             double dbRadius_Base = Convert.ToDouble(txtRadius_Base.Text.Trim());
             double dbAngleOfOffset_Base = nDegreeOfOffset_Base * Math.PI / 180;
@@ -130,8 +130,6 @@ namespace _200408_Hexapod
                 DataGridView_Vector.Rows.Add("S" + dbVector.Key.ToString(), dbVector.Value[0], dbVector.Value[1], dbVector.Value[2], dbTargetLengths[dbVector.Key]);
             }
         }
-
-   
 
         public void InitializeChartControl()
         {
@@ -230,11 +228,6 @@ namespace _200408_Hexapod
       
 
         #endregion
-
-    
-
-
-
 
 
 

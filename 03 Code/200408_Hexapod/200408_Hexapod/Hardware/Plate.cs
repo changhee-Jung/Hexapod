@@ -8,9 +8,16 @@ namespace _200408_Hexapod
 {
     class Plate
     {
+        public enum PlateSettings
+        {
+            None,
+            Base,
+            Upper
+        }
         #region 멤버
+        private PlateSettings m_Plate    = PlateSettings.None;
         private int m_nNumberOfJoint     = 0;
-        private double m_dbHeight          = 0;
+        private double m_dbHeight        = 0;
         private double m_dbRadius        = 0;
         private double m_dbAngleOfOffset = 0;
         private double[] m_dbPosition    = { 0, 0, 0 };
@@ -31,10 +38,11 @@ namespace _200408_Hexapod
         #endregion
 
         #region 생성자
-        public Plate(int nNumberOfJoint, double dbRadius, double dbAngleOfOffset)
-        {
-            m_nNumberOfJoint = nNumberOfJoint;
-            m_dbRadius = dbRadius;
+        public Plate(PlateSettings SetPlate, int nNumberOfJoint, double dbRadius, double dbAngleOfOffset)
+        { 
+            m_Plate           = SetPlate;
+            m_nNumberOfJoint  = nNumberOfJoint;
+            m_dbRadius        = dbRadius;
             m_dbAngleOfOffset = dbAngleOfOffset;
 
             for (int i = 0; i < nNumberOfJoint; i++)
@@ -67,40 +75,61 @@ namespace _200408_Hexapod
         /// <summary>
         /// 2020.04.08 by chjung [ADD] 각 판 조인트 벡터를 계산한다.
         /// </summary>
-        public void MakeJointVector(bool bIsUpper)
+        public void MakeJointVector() 
         {
             double dbAngleOfAxis = (2 * Math.PI) / m_nNumberOfJoint;
             double dbAngleOfPoint = 0;
             for (int i = 0; i < m_nNumberOfJoint; i++)
             {
-                int nOrder = i + 1;
-                if (true == bIsUpper) // 상판일 경우
+                switch (m_nNumberOfJoint)
                 {
-                    if (nOrder % 2 != 0) // 홀수 
-                    {
-                        dbAngleOfPoint = -dbAngleOfAxis * (nOrder - 1) - m_dbAngleOfOffset;
+                    case 3:
+                        dbAngleOfPoint = -dbAngleOfAxis * i;
+                        break;
+                    case 6:
+                        int nOrder = i + 1;
+                        if (m_Plate == PlateSettings.Upper) // 상판일 경우
+                        {
+                            if (nOrder % 2 != 0) // 홀수 
+                            {
+                                dbAngleOfPoint = -dbAngleOfAxis * (nOrder - 1) - m_dbAngleOfOffset;
 
-                    }
-                    else
-                    {
-                        dbAngleOfPoint = -dbAngleOfAxis * nOrder + m_dbAngleOfOffset;
-                    }
-                }
-                else // 하판일 경우
-                {
-                    if (nOrder % 2 != 0)
-                    {
-                        dbAngleOfPoint = -dbAngleOfAxis * nOrder + m_dbAngleOfOffset;
-                    }
-                    else
-                    {
-                        dbAngleOfPoint = -dbAngleOfAxis * (nOrder - 1) - m_dbAngleOfOffset;
-                    }
+                            }
+                            else
+                            {
+                                dbAngleOfPoint = -dbAngleOfAxis * nOrder + m_dbAngleOfOffset;
+                            }
+                        }
+                        else if (m_Plate == PlateSettings.Base) // 하판일 경우
+                        {
+                            if (nOrder % 2 != 0)
+                            {
+                                dbAngleOfPoint = -dbAngleOfAxis * nOrder + m_dbAngleOfOffset;
+                            }
+                            else
+                            {
+                                dbAngleOfPoint = -dbAngleOfAxis * (nOrder - 1) - m_dbAngleOfOffset;
+                            }
+                        }
+                        break;
                 }
                 double dbVector_X = m_dbRadius * Math.Cos(dbAngleOfPoint);
                 double dbVector_Y = m_dbRadius * Math.Sin(dbAngleOfPoint);
                 double[] arVector = { dbVector_X, dbVector_Y, 0 };
                 m_dicOfJointVector[i] = arVector;
+            }
+                
+          
+        }
+
+        public void MakeJointVector_3Axis(bool bIsUpper)
+        {
+            double dbAngleOfAxis = (2 * Math.PI) / m_nNumberOfJoint;
+            double dbAngleOfPoint = 0;
+            List<double> listOfCenterAngle = new List<double>();
+            for(int i = 0; i < m_nNumberOfJoint; i++)
+            {
+                listOfCenterAngle.Add(i * (2 * Math.PI) / m_nNumberOfJoint);
             }
         }
 
