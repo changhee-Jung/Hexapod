@@ -1,0 +1,27 @@
+1. SPA? : Get Volatile Memory Parameters
+2. CST? : Get Assignment Of Stages To Axes
+3. HPA? -> Get List Of Available Parameters
+
+4. MOV? -> 현 Hexapod의 위치 값을 가져온다(x,y,z,r,p,y)
+5. MOV : Hexapod 위치 이동 수행 ( ex. MOV X 10 U 5)
+
+6. SVO? : Get Servo Mode (0: Servo Mode off / 1: Servo Mode On)
+- 서보 모드는 헥사 포드에서는 항상 함께 켜지고 꺼지기 때문에 단일 축에 대해 입력 하면 됨( SVO X 1)
+
+7. TAD?: Get ADC Value Of Input Signal
+8. ERR?
+10. STP (Stop All Axes)
+11. *IDN? : Get Device Identification
+
+반복적으로 운영
+
+ERR? -> TAD? 
+ERR? -> MOV?
+ERR? -> POS?
+
+
+SST? : Set Step Size
+LIM? : Indicate Limit Switch
+TRS? : Indicate Reference Switch
+RON? : Get Reference Mode
+FRF? : Get Reference Result
