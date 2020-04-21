@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DevComponents.DotNetBar2, Version=14.1.0.37, Culture=neutral, PublicKeyToken=7eb7c3a35b91de04, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
@@ -46,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Communication\TcpIp.cs" />
+    <Compile Include="Controller\Controller.cs" />
     <Compile Include="Controller\Coordinate_Control.cs" />
     <Compile Include="Coordinate\Coordinate_Model.cs" />
     <Compile Include="Coordinate\Kinematics.cs" />

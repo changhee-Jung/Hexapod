@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
 namespace _200408_Hexapod
 {
     #region 열거체
@@ -181,6 +181,8 @@ namespace _200408_Hexapod
         {
             if (true == Model_Motion.CheckCompleteMotionProfiles())
             {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
                 List<string> listOfProfileItemsName = new List<string>();
                 Main_ui.Invoke(new Action(
                                  delegate()
@@ -202,6 +204,8 @@ namespace _200408_Hexapod
                                    }));
                 }              
                 m_bIsMakeAllProfile = true;
+                sw.Stop();
+                Console.WriteLine(sw.ElapsedMilliseconds.ToString());
             }
             else
             {
