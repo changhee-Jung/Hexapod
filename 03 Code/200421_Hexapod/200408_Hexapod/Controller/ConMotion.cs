@@ -48,7 +48,8 @@ namespace Seq
             none,
             SetCompletedHardware,
             SetCompletedVector,
-            SetCompletedMotionProfile
+            SetCompletedMotionProfile,
+            Actionable
         }
 
         #region 생성자
@@ -68,7 +69,6 @@ namespace Seq
         Main_UI Main_ui = null;
         ControlState m_State = ControlState.none;
         DataEventArgs DataArgs = null;
-        Stopwatch sw = new Stopwatch();
         #endregion    
 
         #region 메소드
@@ -102,7 +102,7 @@ namespace Seq
                     m_State = ControlState.none;
                     break;
                 case SetData.CalculateMovingVector:
-                    m_State = ControlState.SetCompletedVector;           
+                    m_State = ControlState.SetCompletedMotionProfile;           
                     motionProfile.InitializeState();
                     break;
             }
@@ -130,20 +130,20 @@ namespace Seq
                     }
                     break;
 
-                case ControlState.SetCompletedVector:
-
-                    motionProfile.Update(vector.TargetLenghsOfActuator);
-                    if (motionProfile.State == MotionProfile.MotionState.SetCompletedMotionProfile)
-                    {
-                       DisplayMotionProfileGraph();
-                       m_State = ControlState.SetCompletedMotionProfile;                    
-                    }
+                case ControlState.SetCompletedVector:    
                     break;
 
                 case ControlState.SetCompletedMotionProfile:
-
+                    motionProfile.Update(vector.TargetLenghsOfActuator);
+                    if (motionProfile.State == MotionProfile.MotionState.SetCompletedMotionProfile)
+                    {
+                  
+                       DisplayMotionProfileGraph();
+                       m_State = ControlState.Actionable;                    
+                    }
                     break;
-
+                case ControlState.Actionable:
+                    break;
 
             }
         }
@@ -175,7 +175,7 @@ namespace Seq
                                {
                                    Main_ui.DisplayMotionProfileData(nIndex, "Position", profile.DicOfPosition_MovingAverage);
                                    Main_ui.DisplayMotionProfileData(nIndex, "Velocity", profile.DicOfVelocity_MovingAverage);
-                                   Main_ui.DisplayMotionProfileData(nIndex, "Acceleration", profile.DicAcceleration_MovingAverage);
+                                   Main_ui.DisplayMotionProfileData(nIndex, "Acceleration", profile.DicOfAcceleration_MovingAverage);
                                    Main_ui.SetcomboSelectItem(listOfProfileItemsName);
                                }));
             }              

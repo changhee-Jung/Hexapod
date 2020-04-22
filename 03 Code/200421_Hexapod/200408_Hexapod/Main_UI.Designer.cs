@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             this.label13 = new System.Windows.Forms.Label();
             this.btnMakeHardware = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -47,6 +47,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtHeight = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.cboNumOfJoint = new System.Windows.Forms.ComboBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
             this.label9 = new System.Windows.Forms.Label();
             this.txtToolOffset_Z = new System.Windows.Forms.TextBox();
@@ -79,7 +80,6 @@
             this.cboAxis = new System.Windows.Forms.ComboBox();
             this.lblGraphData_Accel = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
-            this.cboNumOfJoint = new System.Windows.Forms.ComboBox();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DataGridView_Vector)).BeginInit();
@@ -127,7 +127,7 @@
             this.txtAngleOfOffset_Upper.Name = "txtAngleOfOffset_Upper";
             this.txtAngleOfOffset_Upper.Size = new System.Drawing.Size(50, 21);
             this.txtAngleOfOffset_Upper.TabIndex = 36;
-            this.txtAngleOfOffset_Upper.Text = "10";
+            this.txtAngleOfOffset_Upper.Text = "18";
             // 
             // label16
             // 
@@ -153,7 +153,7 @@
             this.txtRadius_Upper.Name = "txtRadius_Upper";
             this.txtRadius_Upper.Size = new System.Drawing.Size(50, 21);
             this.txtRadius_Upper.TabIndex = 33;
-            this.txtRadius_Upper.Text = "80";
+            this.txtRadius_Upper.Text = "50";
             // 
             // groupBox1
             // 
@@ -174,7 +174,7 @@
             this.txtAngleOfOffset_Base.Name = "txtAngleOfOffset_Base";
             this.txtAngleOfOffset_Base.Size = new System.Drawing.Size(50, 21);
             this.txtAngleOfOffset_Base.TabIndex = 36;
-            this.txtAngleOfOffset_Base.Text = "15";
+            this.txtAngleOfOffset_Base.Text = "18";
             // 
             // label15
             // 
@@ -200,7 +200,7 @@
             this.txtRadius_Base.Name = "txtRadius_Base";
             this.txtRadius_Base.Size = new System.Drawing.Size(50, 21);
             this.txtRadius_Base.TabIndex = 33;
-            this.txtRadius_Base.Text = "160";
+            this.txtRadius_Base.Text = "68";
             // 
             // DataGridView_Vector
             // 
@@ -247,7 +247,7 @@
             this.txtHeight.Name = "txtHeight";
             this.txtHeight.Size = new System.Drawing.Size(50, 21);
             this.txtHeight.TabIndex = 50;
-            this.txtHeight.Text = "160";
+            this.txtHeight.Text = "114.3";
             // 
             // groupBox3
             // 
@@ -265,6 +265,18 @@
             this.groupBox3.TabIndex = 52;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Setting";
+            // 
+            // cboNumOfJoint
+            // 
+            this.cboNumOfJoint.FormattingEnabled = true;
+            this.cboNumOfJoint.Items.AddRange(new object[] {
+            "3",
+            "6"});
+            this.cboNumOfJoint.Location = new System.Drawing.Point(156, 200);
+            this.cboNumOfJoint.Name = "cboNumOfJoint";
+            this.cboNumOfJoint.Size = new System.Drawing.Size(50, 20);
+            this.cboNumOfJoint.TabIndex = 60;
+            this.cboNumOfJoint.Text = "6";
             // 
             // groupBox5
             // 
@@ -370,7 +382,7 @@
             this.txtTarget_Yaw.Name = "txtTarget_Yaw";
             this.txtTarget_Yaw.Size = new System.Drawing.Size(50, 21);
             this.txtTarget_Yaw.TabIndex = 44;
-            this.txtTarget_Yaw.Text = "30";
+            this.txtTarget_Yaw.Text = "0";
             // 
             // label7
             // 
@@ -396,7 +408,7 @@
             this.txtTarget_Pitch.Name = "txtTarget_Pitch";
             this.txtTarget_Pitch.Size = new System.Drawing.Size(50, 21);
             this.txtTarget_Pitch.TabIndex = 41;
-            this.txtTarget_Pitch.Text = "20";
+            this.txtTarget_Pitch.Text = "0";
             // 
             // txtTarget_Roll
             // 
@@ -404,7 +416,7 @@
             this.txtTarget_Roll.Name = "txtTarget_Roll";
             this.txtTarget_Roll.Size = new System.Drawing.Size(50, 21);
             this.txtTarget_Roll.TabIndex = 40;
-            this.txtTarget_Roll.Text = "10";
+            this.txtTarget_Roll.Text = "0";
             // 
             // label5
             // 
@@ -477,8 +489,8 @@
             // 
             // chartLinearGraph
             // 
-            chartArea2.Name = "ChartArea1";
-            this.chartLinearGraph.ChartAreas.Add(chartArea2);
+            chartArea1.Name = "ChartArea1";
+            this.chartLinearGraph.ChartAreas.Add(chartArea1);
             this.chartLinearGraph.Location = new System.Drawing.Point(388, 27);
             this.chartLinearGraph.Name = "chartLinearGraph";
             this.chartLinearGraph.Size = new System.Drawing.Size(916, 611);
@@ -567,18 +579,6 @@
             this.label22.Size = new System.Drawing.Size(45, 12);
             this.label22.TabIndex = 62;
             this.label22.Text = "Accel :";
-            // 
-            // cboNumOfJoint
-            // 
-            this.cboNumOfJoint.FormattingEnabled = true;
-            this.cboNumOfJoint.Items.AddRange(new object[] {
-            "3",
-            "6"});
-            this.cboNumOfJoint.Location = new System.Drawing.Point(156, 200);
-            this.cboNumOfJoint.Name = "cboNumOfJoint";
-            this.cboNumOfJoint.Size = new System.Drawing.Size(50, 20);
-            this.cboNumOfJoint.TabIndex = 60;
-            this.cboNumOfJoint.Text = "6";
             // 
             // Main_UI
             // 

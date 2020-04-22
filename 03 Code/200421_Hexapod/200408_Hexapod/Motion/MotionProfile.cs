@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Diagnostics;
 namespace Hexapod
 {
 
@@ -15,8 +15,7 @@ namespace Hexapod
             SetCompletedInitializeState,
             SetCompletedRequiredVelocity,
             SetCompletedPositionProfile,
-            SetCompletedVelocityProfile,
-            SetCompletedAccelerationProfile,
+            SetCompletedTrapezoidalProfile,
             SetCompletedMovingAverage_Profile,
             SetCompletedDecimalPointRounding,
             SetCompletedMotionProfile
@@ -24,13 +23,13 @@ namespace Hexapod
 
         #region 멤버
         MotionState m_State = MotionState.none;
-        double[] dbTargetLength;
         int m_nNumberOfAxis = 0;
-        int m_nCycleTime    = 0;
+        int m_nCycleTime    = 1000;
         int m_nTickTime     = 0;
         bool m_bIsSuccess          = false;      
         Dictionary<int, Motor> m_dicOfMotor;
         Dictionary<int, Profile> m_dicOfProfile;
+        Stopwatch sw = new Stopwatch();
         #endregion
         
         #region 속성
@@ -50,7 +49,7 @@ namespace Hexapod
 
         public void Update(Dictionary<int, double> TargetLengths) // 여기서 Position, Velocity, 소숫점 계산
         {
-            switch(m_State)
+            switch (m_State)
             {
                 case MotionState.none:
                     SetMotorAxis(TargetLengths.Count);
@@ -70,32 +69,41 @@ namespace Hexapod
                     if (true == CheckCompleteMotionProfiles())
                     {
                         m_nTickTime = 0;
-                        m_State = MotionState.SetCompletedMotionProfile;                
+                        m_State = MotionState.SetCompletedPositionProfile;
                     }
-                    m_nTickTime++;
+                    else
+                    {
+                        m_nTickTime++;
+                    }
                     break;
 
                 case MotionState.SetCompletedPositionProfile:
+                    sw.Reset();
+                    sw.Start();
                     CalcuateVelocityProfile();
-
+                    CalcuateAccelerationProfile();      
+                    sw.Stop();
+                    Console.WriteLine("Time: " + sw.ElapsedMilliseconds.ToString() + "msec");
+                    m_State = MotionState.SetCompletedTrapezoidalProfile;
                     break;
 
-                case MotionState.SetCompletedVelocityProfile:
-                    CalcuateAccelerationProfile();
-                    break;
-
-                case MotionState.SetCompletedAccelerationProfile:
+                case MotionState.SetCompletedTrapezoidalProfile:
+                    CalculateMovingAverageProfile();
+                    m_State = MotionState.SetCompletedMovingAverage_Profile;
                     break;
 
                 case MotionState.SetCompletedMovingAverage_Profile:
+                    CalculateDecimalPointRounding();            
+                    m_State = MotionState.SetCompletedDecimalPointRounding;
                     break;
 
                 case MotionState.SetCompletedDecimalPointRounding:
+                    m_State = MotionState.SetCompletedMotionProfile;
+                 
                     break;
 
                 case MotionState.SetCompletedMotionProfile:
                     break;
-
             }
 
         }
@@ -104,27 +112,16 @@ namespace Hexapod
         public void InitializeState()
         {
             if (m_dicOfProfile.Count <= 0) { return; }
- 
-            for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++ )
-            {
-                Profile SelectedProfile = m_dicOfProfile[nIndex];
-                SelectedProfile.bIsArrive = false;
-            }
             m_State = MotionState.none;
         }
         
         public void SetCycleTime(int nCycleTime)
         {
-            if (m_nCycleTime != nCycleTime)
+            for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
             {
-                m_nCycleTime = nCycleTime;
-
-                for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
-                {
-                    Profile profile = m_dicOfProfile[nIndex];
-                    profile.CycleTime = nCycleTime;
-                }
-            }    
+                Profile profile = m_dicOfProfile[nIndex];
+                profile.CycleTime = nCycleTime;
+            }            
         }
 
         public Profile GetAxisProfile(int nIndex)
@@ -141,7 +138,6 @@ namespace Hexapod
         public void SetMotorAxis(int nNumberOfAxis)
         {
             m_nNumberOfAxis = nNumberOfAxis;
-            dbTargetLength = new double[nNumberOfAxis];
             m_dicOfMotor.Clear();
             m_dicOfProfile.Clear();
             for (int nIndex = 0; nIndex < nNumberOfAxis; nIndex++)
@@ -186,6 +182,7 @@ namespace Hexapod
         {
             for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
             {
+               // m_dicOfProfile[nIndex].CalculateVelocityProfile();
                 Profile profile = m_dicOfProfile[nIndex];
                 profile.CalculateVelocityProfile();
 
@@ -200,7 +197,28 @@ namespace Hexapod
 
             }
         }
+        public void CalculateMovingAverageProfile()
+        {
+            for(int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
+            {
+                Profile profile = m_dicOfProfile[nIndex];
+                profile.CalculateVelocityProfile_MovingAverage();
+                profile.CalculatePositionProfile_MovingAverage();
+                profile.CalculateAccelerationProfile_MovingAverage();
+            }
+        }
 
+        public void CalculateDecimalPointRounding()
+        {
+            for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
+            {
+                Profile profile = m_dicOfProfile[nIndex];
+                profile.CalculateDigitData(profile.DicOfPosition_MovingAverage);
+                profile.CalculateDigitData(profile.DicOfVelocity_MovingAverage);
+                profile.CalculateDigitData(profile.DicOfAcceleration_MovingAverage);
+            }
+
+        }
         public bool CheckCompleteMotionProfiles()
         {
             bool bIsComplete = true;

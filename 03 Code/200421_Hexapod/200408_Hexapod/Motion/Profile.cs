@@ -31,7 +31,7 @@ namespace Hexapod
         public Dictionary<int, double> DicOfAcceleration { get { return m_dicOfAcceleration; } }
         public Dictionary<int, double> DicOfVelocity_MovingAverage { get { return m_dicOfVelocity_MovingAverage; } }
         public Dictionary<int, double> DicOfPosition_MovingAverage { get { return m_dicPosition_MovingAverage; } }
-        public Dictionary<int, double> DicAcceleration_MovingAverage { get { return m_dicAcceleration_MovingAverage; } }
+        public Dictionary<int, double> DicOfAcceleration_MovingAverage { get { return m_dicAcceleration_MovingAverage; } }
 
 
         private double[] m_ardbVelocity = new double[300];
@@ -89,19 +89,12 @@ namespace Hexapod
                 }
                 m_dicOfPosition.Add(nTickTime, dbNextPosition);
 
+                //if (dbTickTime != 0 && dbNextPosition >= m_Motor.TargetPosition)
+                //{
+                //    m_bIsArrive = true;
+                //}
                 if (dbTickTime >= dbEndTime)
                 {
-                    // 사다리꼴 프로파일 계산
-                    CalculateVelocityProfile();
-                    CalculateAccelerationProfile();
-                    // 이동 평균 사다리꼴 프로파일 계산
-                    CalculateVelocityProfile_MovingAverage();
-                    CalculatePositionProfile_MovingAverage();
-                    CalculateAccelerationProfile_MovingAverage();
-                    // 소숫점 자리 계산
-                    CalculateDigitData(m_dicPosition_MovingAverage);
-                    CalculateDigitData(m_dicOfVelocity_MovingAverage);
-                    CalculateDigitData(m_dicAcceleration_MovingAverage);
                     m_bIsArrive = true;
                 }
             }                  

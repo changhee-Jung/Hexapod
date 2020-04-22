@@ -1,5 +1,5 @@
 1. SPA? : Get Volatile Memory Parameters
-2. CST? : Get Assignment Of Stages To Axes
+2. CST? : Get Assignment Of Stages To Axes (ex. CST? X. CST? Y)
 3. HPA? -> Get List Of Available Parameters
 
 4. MOV? -> 현 Hexapod의 위치 값을 가져온다(x,y,z,r,p,y)
@@ -12,7 +12,8 @@
 8. ERR?
 10. STP (Stop All Axes)
 11. *IDN? : Get Device Identification
-
+12. SAI? ALL.
+13.
 반복적으로 운영
 
 ERR? -> TAD? 
@@ -25,3 +26,28 @@ LIM? : Indicate Limit Switch
 TRS? : Indicate Reference Switch
 RON? : Get Reference Mode
 FRF? : Get Reference Result
+
+1. ERR? .ERR?. *IDN?.
+2. CSV?.
+3. HLP?			Get List Of Available Commands
+4. SAI?			Get List Of Current Axis Identifiers
+5. KEN?			Activate Coordinate System
+6. HPA? 			Get List Of Available Parameters
+7. HPV?
+8. CCL?			Get Command Level
+9. SAI?			Get List Of Current Axis Identifiers	
+10. SAI? ALL.
+11. CST? X. / CST? Y. / CST? Z. / CST? U. / CST? V. / CST? W.
+12. CST? A./ CST? B./
+13. LIM? X.		Indicate Limit Switches
+14. TRS? X.		Indicate Reference Switches
+15. RON? X.		Get Reference Mode
+16. SVO? X. 		Get Servo Status
+17. FRF? X.		Get Referencing Result
+18. MOV? X. / MOV? Y. / MOV? Z. / MOV? U. / MOV? V. / MOV? W. /
+19. PUN? X.		Get Axis Unit
+20. SST? Y.		Get Step Size
+21. TAD?			Get ADC Value Of Input Signal
+22. SRG? 4 1.		Query Status Register Value
+23. TIO?
+FRF X. ERR?

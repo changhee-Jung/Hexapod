@@ -137,7 +137,7 @@ namespace _200408_Hexapod
         {
             for(int i = 0; i < m_dbPosition.Length; i++)
             {
-                m_dbPosition[i] += ar_dbTranslationVector[i];
+                m_dbPosition[i] = ar_dbTranslationVector[i];
             }
         }
 

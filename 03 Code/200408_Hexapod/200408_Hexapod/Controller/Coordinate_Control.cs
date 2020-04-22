@@ -181,8 +181,6 @@ namespace _200408_Hexapod
         {
             if (true == Model_Motion.CheckCompleteMotionProfiles())
             {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
                 List<string> listOfProfileItemsName = new List<string>();
                 Main_ui.Invoke(new Action(
                                  delegate()
@@ -204,8 +202,7 @@ namespace _200408_Hexapod
                                    }));
                 }              
                 m_bIsMakeAllProfile = true;
-                sw.Stop();
-                Console.WriteLine(sw.ElapsedMilliseconds.ToString());
+
             }
             else
             {
