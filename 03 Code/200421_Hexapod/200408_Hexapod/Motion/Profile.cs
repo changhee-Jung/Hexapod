@@ -96,6 +96,7 @@ namespace Hexapod
                 if (dbTickTime >= dbEndTime)
                 {
                     m_bIsArrive = true;
+
                 }
             }                  
         }

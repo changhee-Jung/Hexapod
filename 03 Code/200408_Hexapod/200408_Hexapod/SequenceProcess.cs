@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-
+using System.Diagnostics;
 namespace _200408_Hexapod
 {
     enum SequenceState
@@ -21,7 +21,7 @@ namespace _200408_Hexapod
 
         Main_UI Main_ui = null;
         Coordinate_Control Control_Coordinate = null;
-
+        Stopwatch sw = new Stopwatch();
         int nTicktime  =  0;
         int nCycleTime = 1000; 
 
@@ -49,6 +49,7 @@ namespace _200408_Hexapod
                         {
                             MainSequenceState = SequenceState.Ready;
                             nTicktime = 0;
+                            sw.Restart();
                         }                      
                         break;
                     case SequenceState.Ready:
@@ -60,6 +61,8 @@ namespace _200408_Hexapod
                         {
                             MainSequenceState = SequenceState.Processing;
                             nTicktime = 0;
+                            sw.Stop();
+                            Console.WriteLine("Time: " + sw.ElapsedMilliseconds.ToString() + "msec");
                         }
                         break;
                     case SequenceState.Processing:
@@ -70,14 +73,15 @@ namespace _200408_Hexapod
                         break;
                     case SequenceState.Done:
                         break;
-
-                    Thread.Sleep(1);
+                  
 
                 } 
 
                 // 1. input 
                 // 2. process 진행
                 // 3. output
+
+             Thread.Sleep(1);
             }
         }
 

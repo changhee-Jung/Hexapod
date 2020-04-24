@@ -91,7 +91,6 @@ namespace _200408_Hexapod
 
                 if (dbTickTime >= dbEndTime)
                 {
-                    sw.Start();
                     // 사다리꼴 프로파일 계산
                     CalculateVelocityProfile();
                     CalculateAccelerationProfile();
@@ -104,8 +103,6 @@ namespace _200408_Hexapod
                     CalculateDigitData(m_dicOfVelocity_MovingAverage);
                     CalculateDigitData(m_dicAcceleration_MovingAverage);
                     m_bIsArrive = true;
-                    sw.Stop();
-                    Console.WriteLine("Time: " + sw.ElapsedMilliseconds.ToString() + "msec");
                 }
             }                  
         }

@@ -46,9 +46,10 @@ namespace Seq
         enum ControlState
         {
             none,
-            SetCompletedHardware,
-            SetCompletedVector,
-            SetCompletedMotionProfile,
+            SetHardware,
+            SetVector,
+            Wait,
+            SetMotionProfile,
             Actionable
         }
 
@@ -94,15 +95,15 @@ namespace Seq
                 case SetData.HardWareData:
                     hardware.SetEventData(SetData.HardWareData, TempArgs);
                     vector.InitializeState();
-                    m_State = ControlState.none;
+                    m_State = ControlState.SetHardware;
                     break;
                 case SetData.TargetCoordinate:
                     hardware.SetEventData(SetData.TargetCoordinate, TempArgs);
                     vector.InitializeState();
-                    m_State = ControlState.none;
+                    m_State = ControlState.SetVector;
                     break;
                 case SetData.CalculateMovingVector:
-                    m_State = ControlState.SetCompletedMotionProfile;           
+                    m_State = ControlState.SetMotionProfile;           
                     motionProfile.InitializeState();
                     break;
             }
@@ -113,33 +114,35 @@ namespace Seq
             switch (m_State)
             {
                 case ControlState.none:
+                
+                    break;
+
+                case ControlState.SetHardware:
                     hardware.Update();
                     if (hardware.State == Hardware.HardwareState.Actionable)
                     {
-                        m_State = ControlState.SetCompletedHardware;
+                        m_State = ControlState.SetVector;
                     }
                     break;
-
-                case ControlState.SetCompletedHardware:
+                case ControlState.SetVector:
                     vector.Update(hardware);
-
                     if (vector.Procedure == Vector.SettingProcedure.SetCompletedActuatorLengths)
                     {
-                        m_State = ControlState.SetCompletedVector;
+                        m_State = ControlState.Wait;
                         DisplayActuatorVector();
                     }
                     break;
 
-                case ControlState.SetCompletedVector:    
+                case ControlState.Wait:    
                     break;
 
-                case ControlState.SetCompletedMotionProfile:
+                case ControlState.SetMotionProfile:
                     motionProfile.Update(vector.TargetLenghsOfActuator);
-                    if (motionProfile.State == MotionProfile.MotionState.SetCompletedMotionProfile)
+                    
+                    if (motionProfile.State == MotionProfile.MotionState.CompletedMotionProfile)
                     {
-                  
                        DisplayMotionProfileGraph();
-                       m_State = ControlState.Actionable;                    
+                       m_State = ControlState.Actionable;           
                     }
                     break;
                 case ControlState.Actionable:
@@ -178,7 +181,7 @@ namespace Seq
                                    Main_ui.DisplayMotionProfileData(nIndex, "Acceleration", profile.DicOfAcceleration_MovingAverage);
                                    Main_ui.SetcomboSelectItem(listOfProfileItemsName);
                                }));
-            }              
+            }
         }
 
     

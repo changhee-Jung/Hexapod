@@ -13,7 +13,6 @@ namespace Hexapod
         Thread SequenceThread;
         Main_UI Main_ui      = null;
         ConMotion conMotion = null;
-
         public SeqProcess(Main_UI _Main_ui)
         {
             conMotion = new ConMotion(_Main_ui, new Hardware(), new Vector(), new MotionProfile());
@@ -34,6 +33,8 @@ namespace Hexapod
                 conMotion.Update();
   
                 Thread.Sleep(1);
+
+
                 // 1. input 
                 // 2. process 진행
                 // 3. output

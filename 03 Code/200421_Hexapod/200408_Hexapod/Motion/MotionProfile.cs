@@ -12,13 +12,13 @@ namespace Hexapod
         public enum MotionState
         {
             none,
-            SetCompletedInitializeState,
-            SetCompletedRequiredVelocity,
-            SetCompletedPositionProfile,
-            SetCompletedTrapezoidalProfile,
-            SetCompletedMovingAverage_Profile,
-            SetCompletedDecimalPointRounding,
-            SetCompletedMotionProfile
+            SetHardwareCondition,
+            SetRequiredVelocity,
+            SetPositionProfile,
+            SetTrapezoidalProfile,
+            SetMovingAverage_Profile,
+            SetDecimalPointRounding,
+            CompletedMotionProfile
         }
 
         #region 멤버
@@ -52,24 +52,31 @@ namespace Hexapod
             switch (m_State)
             {
                 case MotionState.none:
+                    break;
+
+                case MotionState.SetHardwareCondition:
+                    sw.Restart();
                     SetMotorAxis(TargetLengths.Count);
                     SetTargetPosition(TargetLengths);
-                    m_State = MotionState.SetCompletedInitializeState;
+                    SetCycleTime(m_nCycleTime);
+                    m_State = MotionState.SetRequiredVelocity;
                     break;
 
-                case MotionState.SetCompletedInitializeState:
-                    SetCycleTime(m_nCycleTime);
+                case MotionState.SetRequiredVelocity:
                     CalculateRequiredVelocity();
                     m_nTickTime = 0;
-                    m_State = MotionState.SetCompletedRequiredVelocity;
+                    m_State = MotionState.SetPositionProfile;
                     break;
 
-                case MotionState.SetCompletedRequiredVelocity:
+                case MotionState.SetPositionProfile:
                     CalcuatePositionProfile(m_nTickTime);
-                    if (true == CheckCompleteMotionProfiles())
+                    bool bIsEndCalculatePosition = CheckCompleteMotionProfiles();
+                    if (true == bIsEndCalculatePosition)
                     {
                         m_nTickTime = 0;
-                        m_State = MotionState.SetCompletedPositionProfile;
+                        m_State = MotionState.SetTrapezoidalProfile;
+                        sw.Stop();
+                        Console.WriteLine("Time: " + sw.ElapsedMilliseconds.ToString() + "msec");
                     }
                     else
                     {
@@ -77,42 +84,47 @@ namespace Hexapod
                     }
                     break;
 
-                case MotionState.SetCompletedPositionProfile:
-                    sw.Reset();
-                    sw.Start();
+                case MotionState.SetTrapezoidalProfile:
                     CalcuateVelocityProfile();
                     CalcuateAccelerationProfile();      
-                    sw.Stop();
-                    Console.WriteLine("Time: " + sw.ElapsedMilliseconds.ToString() + "msec");
-                    m_State = MotionState.SetCompletedTrapezoidalProfile;
+                    m_State = MotionState.SetMovingAverage_Profile;
                     break;
 
-                case MotionState.SetCompletedTrapezoidalProfile:
+                case MotionState.SetMovingAverage_Profile:
                     CalculateMovingAverageProfile();
-                    m_State = MotionState.SetCompletedMovingAverage_Profile;
+                    m_State = MotionState.SetDecimalPointRounding;
                     break;
 
-                case MotionState.SetCompletedMovingAverage_Profile:
-                    CalculateDecimalPointRounding();            
-                    m_State = MotionState.SetCompletedDecimalPointRounding;
+                case MotionState.SetDecimalPointRounding:
+                    CalculateDecimalPointRounding();
+                    m_State = MotionState.CompletedMotionProfile;
+
                     break;
 
-                case MotionState.SetCompletedDecimalPointRounding:
-                    m_State = MotionState.SetCompletedMotionProfile;
-                 
-                    break;
-
-                case MotionState.SetCompletedMotionProfile:
+                case MotionState.CompletedMotionProfile:
+                  
                     break;
             }
 
         }
 
 
+        public void MakeMotionProfile(int nTicktime)
+        {
+            for (int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
+            {
+                Profile profile = m_dicOfProfile[nIndex];
+                profile.CalculatePositionProfile(nTicktime, profile.Motor.Position);
+
+            }
+        }
+
+
+
+
         public void InitializeState()
         {
-            if (m_dicOfProfile.Count <= 0) { return; }
-            m_State = MotionState.none;
+            m_State = MotionState.SetHardwareCondition;
         }
         
         public void SetCycleTime(int nCycleTime)
@@ -225,11 +237,11 @@ namespace Hexapod
 
             for(int nIndex = 0; nIndex < m_dicOfProfile.Count; nIndex++)
             {
-                bIsComplete &= m_dicOfProfile[nIndex].bIsArrive;
+                if (false == m_dicOfProfile[nIndex].bIsArrive)
+                    bIsComplete = false;
             }
             m_bIsSuccess = bIsComplete;
-
-            return m_bIsSuccess;
+            return bIsComplete;
         }
 
         #endregion
