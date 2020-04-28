@@ -15,8 +15,10 @@ namespace PI_Hexapod
 
         int m_ID;
         bool m_bIsConnected = false;
+
         Dictionary<string, double> m_dicOfAxis= new Dictionary<string, double>();
         ErrorCode m_Error;
+
         public int ID { get { return m_ID; } set { m_ID = value; } }
         public bool IsConnected { get { return m_bIsConnected; } set { m_bIsConnected = value; } }
         public Dictionary<string, double> DicOfAxis { get { return m_dicOfAxis; } }
@@ -52,9 +54,7 @@ namespace PI_Hexapod
 
                 PI.GCS2.qPOS(ID, listOfAxis[nIndex], dbPos);
                 DicOfAxis[listOfAxis[nIndex]] = dbPos[0];
-            }
-          
-          
+            }         
         }
 
         public double GetAxisPosition(string strAxis)
@@ -67,7 +67,6 @@ namespace PI_Hexapod
             return dbResult;
         }
 
-
         public void SetHome()
         {
             if (m_Error == ErrorCode.PI_CNTR_NO_ERROR)
@@ -77,27 +76,19 @@ namespace PI_Hexapod
                 // 진행중인지 파악할때는 qFRF
             }
         }
-
         public void SetZeroPosition()
         {
             foreach(KeyValuePair<string,double> Axis in m_dicOfAxis)
             {
-                Move(Axis.Key, 0);
+  //              Move(Axis.Key, 0);
             }
         }
 
-        public void Move(string strAxis, double dbPos)
+        public void Move(string strAxis, double[] dbPos)
         {
             if (m_Error == ErrorCode.PI_CNTR_NO_ERROR)
             {
-                //int[] iChnl = new int[2];
-                //iChnl[0] = 0;
-                //int[] iPar = new int[2];
-                //iPar[0] = 1;
-                //PI.GCS2.DRT(m_ID, iChnl, iPar, "0", 1);
-                double[] dVals = new double[1];
-                dVals[0] = dbPos;
-                PI.GCS2.MOV(m_ID, strAxis, dVals);
+                PI.GCS2.MOV(m_ID, strAxis, dbPos);
             }
 
         }

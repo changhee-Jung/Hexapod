@@ -19,13 +19,15 @@ namespace PI_Hexapod
         {
             InitializeComponent();
 
-            controller = new Controller(this);
+            controller     = new Controller(this);
 
             seqApplication = new SeqApplication(this, controller);
             seqApplication.ThreadStart();
         }
 
-        Controller controller   = null;
+        public event EventHandler
+        
+        Controller controller         = null;
         SeqApplication seqApplication = null;
 
         private void btnPIInterface_Click(object sender, EventArgs e)
@@ -45,7 +47,8 @@ namespace PI_Hexapod
             {
                 string strAxis = cboAvailableAxis.Text;
                 double dbPosition = Convert.ToDouble(txtCmdPosition.Text);
-                controller.MovePosition(strAxis, dbPosition);
+                double[] dbTargetPosition = { dbPosition };
+                controller.MovePosition(strAxis, dbTargetPosition);
             }
         }
 
@@ -81,15 +84,13 @@ namespace PI_Hexapod
     
         }
 
-
         private void btnClear_Click(object sender, EventArgs e)
         {
             txtDialog.Clear();
         }
 
         private void btnRotation_Click(object sender, EventArgs e)
-        {
-            
+        {          
             if(controller.ActionState == ActionState.STOP)
             {
                 controller.ActionState = ActionState.START;
@@ -108,12 +109,9 @@ namespace PI_Hexapod
 
         private void btnZeroPosition_Click(object sender, EventArgs e)
         {
-            controller.MovePosition("X", 0);
-            controller.MovePosition("Y", 0);
-            controller.MovePosition("Z", 0);
-            controller.MovePosition("U", 0);
-            controller.MovePosition("V", 0);
-            controller.MovePosition("W", 0);
+            double[] dbZero = { 0, 0, 0, 0, 0, 0 };
+            controller.MovePosition("X Y Z U V W", dbZero);
+
         }
 
         private void btnSend_Click(object sender, EventArgs e)

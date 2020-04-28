@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using PI_Hexapod;
 using System.Diagnostics;
+using NLog;
+
 namespace Seq
 {
     class SeqApplication
@@ -14,12 +16,16 @@ namespace Seq
         {
             this.main_UI = main_UI;
             this.controller = controller;
+            ErrorLog = LogManager.GetLogger("ErrorLog");
+            ErrorLog.Info("ErrorLog Start!");
         }
 
         Thread MainThread;
         Controller controller;
         Main_UI main_UI;
+        Logger ErrorLog = null;
         Stopwatch sw = new Stopwatch();
+
         int ntick     = 0;
         int nInterval = 1000;
 
@@ -38,20 +44,18 @@ namespace Seq
         {
             while (true)
             {
-                sw.Restart();
                 try
                 {
                     controller.Update();
 
-                    int SleepTime = 100 - (int)controller.ElapsedTickCounter;
-                    Thread.Sleep(SleepTime);
-                    sw.Stop();
-                    Console.WriteLine("Time :" + sw.ElapsedMilliseconds.ToString() + "msec");
+                    //int SleepTime = 100 - (int)controller.ElapsedTickCounter;
+                    Thread.Sleep(1);
 
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.ToString());
+                    ErrorLog.Error(ex.ToString());
                 }
                 UpdateTickCount();
 

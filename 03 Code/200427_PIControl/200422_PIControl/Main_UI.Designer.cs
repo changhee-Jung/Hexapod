@@ -56,6 +56,8 @@
             this.lblPosition_W = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.btnSend = new System.Windows.Forms.Button();
+            this.lblBufferSize = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -318,11 +320,31 @@
             this.btnSend.UseVisualStyleBackColor = true;
             this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
+            // lblBufferSize
+            // 
+            this.lblBufferSize.AutoSize = true;
+            this.lblBufferSize.Location = new System.Drawing.Point(530, 430);
+            this.lblBufferSize.Name = "lblBufferSize";
+            this.lblBufferSize.Size = new System.Drawing.Size(11, 12);
+            this.lblBufferSize.TabIndex = 30;
+            this.lblBufferSize.Text = "0";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(468, 430);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(45, 12);
+            this.label7.TabIndex = 29;
+            this.label7.Text = "Buffer :";
+            // 
             // Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(644, 431);
+            this.ClientSize = new System.Drawing.Size(666, 457);
+            this.Controls.Add(this.lblBufferSize);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.lblPosition_W);
             this.Controls.Add(this.label14);
@@ -383,6 +405,8 @@
         private System.Windows.Forms.Label label14;
         public System.Windows.Forms.TextBox txtDialog;
         private System.Windows.Forms.Button btnSend;
+        private System.Windows.Forms.Label label7;
+        public System.Windows.Forms.Label lblBufferSize;
     }
 }
 

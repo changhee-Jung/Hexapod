@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using PI_Hexapod;
+using NLog;
 
 namespace Seq
-{     
+{
+
+    public class 
 
     enum ActionState
     {
@@ -14,26 +17,36 @@ namespace Seq
         MOVE,
         STOP
     }
+
     class Controller
     {
+ 
         public Controller(Main_UI _main_UI)
         {
-            main_UI    = _main_UI;
+            Log = LogManager.GetLogger("InfoLog");
+            main_UI = _main_UI;
             model_Hexa = new Model();
+            Log.Info("Controller Start");
         }
 
+        Logger Log = null;
         Main_UI main_UI = null;
         Model model_Hexa = null;
         ActionState m_ActionState = ActionState.STOP;
         TickCount tickCount = new TickCount();
+
         string m_strError;
-        int nTick = 0;
+        long m_lBufferSize            = 0;
+        int nTick                     = 0;
         double m_dbElapsedTickCounter = 0;
+
+        List<double> m_listOfPosition_U = new List<double>();
+        List<double> m_listOfPosition_V = new List<double>();
         Stopwatch sw = new Stopwatch();
 
         public ActionState ActionState { get { return m_ActionState; } set { m_ActionState = value; } }
         public double ElapsedTickCounter { get { return m_dbElapsedTickCounter; } }
-       
+
 
         public bool Connect()
         {
@@ -43,9 +56,10 @@ namespace Seq
             {
                 int nIsConnected = PI.GCS2.IsConnected(model_Hexa.ID); // Connect Success(1) 
                 model_Hexa.IsConnected = Convert.ToBoolean(nIsConnected);
-                if(nIsConnected == 1)
+                if (nIsConnected == 1)
                 {
                     CompleteConnectionProcess(model_Hexa.ID);
+                    SetCyclicMode(model_Hexa.ID);
                     bResult = true;
                 }
                 else
@@ -72,7 +86,6 @@ namespace Seq
             string[] words = (IdnBuffer.ToString()).Split('\n');
             foreach (string strAxis in words)
             {
-                
                 if (strAxis != "")
                 {
                     if (strAxis.Contains('A') || strAxis.Contains('B')) { continue; }
@@ -86,15 +99,15 @@ namespace Seq
         {
             tickCount.Start();
 
-           if(model_Hexa.IsConnected)
+            if (model_Hexa.IsConnected)
             {
                 CheckError();
                 GetCurrentPos();
-
+                GetTargetPositionBuffer();
                 switch (m_ActionState)
                 {
                     case ActionState.START:
-                        model_Hexa.SetZeroPosition();
+
                         if (false == model_Hexa.IsMoving())
                         {
                             nTick = 0;
@@ -104,12 +117,12 @@ namespace Seq
                         break;
 
                     case ActionState.MOVE:
-                     //   if (false == model_Hexa.IsMoving()) // 위치 확인
+                        if (m_lBufferSize <= 100)
                         {
-                            double dbPosition_U = 5 * Math.Sin(Math.PI * 0.1 * nTick);
-                            double dbPosition_V = 5 * Math.Cos(Math.PI * 0.1 * nTick);
-                            RotateAction(dbPosition_U, dbPosition_V);
-                            UpdateTickCount();
+                            sw.Restart();
+                            RotateAction();
+                            sw.Stop();
+                            Log.Info("SendTime: " + sw.ElapsedMilliseconds.ToString() + "msec");                         
                         }
                         break;
 
@@ -118,31 +131,26 @@ namespace Seq
 
                 }
             }
-
             tickCount.Stop();
             m_dbElapsedTickCounter = tickCount.GetTickCount();
             Console.WriteLine("TickTime: " + m_dbElapsedTickCounter.ToString());
-             
         }
-
-
+    
         /// <summary>
         /// 2020.04.23 by chjung [ADD] 에러 체크를 실행한다.
         /// </summary>
         public void CheckError()
-        {
-            
+        {     
             string strError = model_Hexa.CheckError();
 
             if (strError != m_strError)
             {
                 m_strError = strError;
                 main_UI.Invoke(new Action(delegate () { main_UI.DisplayError(m_strError); }));
-
+                Log.Error(m_strError);
             }
         }
-          
-
+         
         /// <summary>
         /// 2020.04.23 by chjung [ADD] Hexapod의 각 축의 길이 값을 가져온다.
         /// </summary>
@@ -163,46 +171,26 @@ namespace Seq
         /// <summary>
         /// 2020.04.23 by chjung [ADD] 선택 Axis의 위치를 이동시킨다.
         /// </summary>
-        public void MovePosition(string strAxis,double dbPos)
+        public void MovePosition(string strAxis,double[] dbPos)
         {
             model_Hexa.Move(strAxis, dbPos);   
         }
 
-        public void RotateAction(double dbPosition_U, double dbPosition_V)
+        public void RotateAction()
         {
-            MovePosition("U", dbPosition_U);
-            MovePosition("V", dbPosition_V);
-            //switch (m_ActionState)
-            //{
-            //    case ActionState.first:
-            //        MovePosition("U", 5);
-            //        MovePosition("V", 5);
-            //        m_ActionState = ActionState.second;
-            //        break;
-
-            //    case ActionState.second:
-            //        MovePosition("U", -5);
-            //        MovePosition("V", 5);
-            //        m_ActionState = ActionState.third;
-            //        break;
-
-            //    case ActionState.third:
-            //        MovePosition("U", -5);
-            //        MovePosition("V", -5);
-            //        m_ActionState = ActionState.fourth;
-            //        break;
-
-            //    case ActionState.fourth:
-            //        MovePosition("U", 5);
-            //        MovePosition("V", -5);
-            //        m_ActionState = ActionState.first;
-            //        break;
-            //}
+            for (int i = 0; i < 100 - m_lBufferSize; i++)
+            {
+                double dbPosition_U = 5 * Math.Sin(Math.PI * 0.02 * nTick);
+                double dbPosition_V = 5 * Math.Cos(Math.PI * 0.02 * nTick);
+                double[] UVTargetPosition = { dbPosition_U, dbPosition_V };
+                MovePosition("X Y", UVTargetPosition);
+                UpdateTickCount();
+            }
         }
 
         public void UpdateTickCount()
         {
-            if(nTick >= 20)
+            if(nTick >= 100)
             {
                 nTick = 0;
             }
@@ -231,8 +219,32 @@ namespace Seq
                 double dbVelocity = Convert.ToDouble(ar_strName[1]);
                 PI.GCS2.VLS(model_Hexa.ID, dbVelocity);
             }
-                
+ 
         }
+        /// <summary>
+        /// 2020.04.28 by chjung [ADD] 현재 저장된 PositionBuffer 크기를 확인한다.
+        /// </summary>
+        public void GetTargetPositionBuffer() 
+        {
+            uint[] nBufferLength = { 0x19001904 };
+            long[] lData = { 1 };
+            PI.GCS2.qSPA_int64(model_Hexa.ID, "X", nBufferLength, lData);
+            m_lBufferSize = lData[0];
+            Log.Info("BufferSize :" + lData[0].ToString());
+            main_UI.Invoke(new Action(delegate () { main_UI.lblBufferSize.Text = lData[0].ToString(); }));
+         
+        }
+        /// <summary>
+        /// 2020.04.28 by chjung [ADD] Cyclic Mode를 설정한다.
+        /// </summary>
+        public void SetCyclicMode(int nID)
+        {
+            uint[] nTrajectorySource = { 0x19001900, 0x19001901 };
+            long[] lSetData = { 1, 1 };
+            PI.GCS2.SPA_int64(nID, "X", nTrajectorySource, lSetData);
+
+        }
+
 
 
     }
