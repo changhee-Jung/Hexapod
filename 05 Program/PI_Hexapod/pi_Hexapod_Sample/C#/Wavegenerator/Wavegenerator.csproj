@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{618A7D3C-3975-4D7E-AA10-29A05DCB4809}</ProjectGuid>
+    <ProjectGuid>{39993F53-473F-4894-ADBB-CC9BE896B78E}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Wavegenerator</RootNamespace>

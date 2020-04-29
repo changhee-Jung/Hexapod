@@ -24,9 +24,7 @@ namespace PI_Hexapod
             seqApplication = new SeqApplication(this, controller);
             seqApplication.ThreadStart();
         }
-
-        public event EventHandler
-        
+   
         Controller controller         = null;
         SeqApplication seqApplication = null;
 
@@ -91,7 +89,7 @@ namespace PI_Hexapod
 
         private void btnRotation_Click(object sender, EventArgs e)
         {          
-            if(controller.ActionState == ActionState.STOP)
+            if(controller.ActionState == ActionState.Wait)
             {
                 controller.ActionState = ActionState.START;
             }
@@ -125,7 +123,18 @@ namespace PI_Hexapod
             seqApplication.ThreadStop();
         }
 
+        private void btnWaveGenerator_Click(object sender, EventArgs e)
+        {
+             controller.WaveGeneratorAction();
+         //   controller.ActionState = ActionState.Test;
 
+        }
+
+        private void btnStop_Click(object sender, EventArgs e)
+        {
+            controller.Stop();
+            controller.ActionState = ActionState.STOP;
+        }
     }
 
 }

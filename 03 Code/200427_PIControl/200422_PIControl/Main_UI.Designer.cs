@@ -58,6 +58,8 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.lblBufferSize = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
+            this.btnWaveGenerator = new System.Windows.Forms.Button();
+            this.btnStop = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,7 +69,7 @@
             this.txtDialog.Multiline = true;
             this.txtDialog.Name = "txtDialog";
             this.txtDialog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDialog.Size = new System.Drawing.Size(421, 290);
+            this.txtDialog.Size = new System.Drawing.Size(421, 160);
             this.txtDialog.TabIndex = 0;
             // 
             // txtErrorLog
@@ -80,14 +82,14 @@
             // 
             // txtSend
             // 
-            this.txtSend.Location = new System.Drawing.Point(12, 391);
+            this.txtSend.Location = new System.Drawing.Point(12, 264);
             this.txtSend.Name = "txtSend";
             this.txtSend.Size = new System.Drawing.Size(251, 21);
             this.txtSend.TabIndex = 2;
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(358, 389);
+            this.btnClear.Location = new System.Drawing.Point(358, 262);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(75, 23);
             this.btnClear.TabIndex = 3;
@@ -196,7 +198,7 @@
             // 
             this.btnRotation.Location = new System.Drawing.Point(470, 207);
             this.btnRotation.Name = "btnRotation";
-            this.btnRotation.Size = new System.Drawing.Size(157, 47);
+            this.btnRotation.Size = new System.Drawing.Size(156, 47);
             this.btnRotation.TabIndex = 15;
             this.btnRotation.Text = "Rotate Start";
             this.btnRotation.UseVisualStyleBackColor = true;
@@ -312,7 +314,7 @@
             // 
             // btnSend
             // 
-            this.btnSend.Location = new System.Drawing.Point(282, 389);
+            this.btnSend.Location = new System.Drawing.Point(282, 262);
             this.btnSend.Name = "btnSend";
             this.btnSend.Size = new System.Drawing.Size(75, 23);
             this.btnSend.TabIndex = 28;
@@ -338,11 +340,33 @@
             this.label7.TabIndex = 29;
             this.label7.Text = "Buffer :";
             // 
+            // btnWaveGenerator
+            // 
+            this.btnWaveGenerator.Location = new System.Drawing.Point(14, 296);
+            this.btnWaveGenerator.Name = "btnWaveGenerator";
+            this.btnWaveGenerator.Size = new System.Drawing.Size(124, 36);
+            this.btnWaveGenerator.TabIndex = 31;
+            this.btnWaveGenerator.Text = "Wave Generator";
+            this.btnWaveGenerator.UseVisualStyleBackColor = true;
+            this.btnWaveGenerator.Click += new System.EventHandler(this.btnWaveGenerator_Click);
+            // 
+            // btnStop
+            // 
+            this.btnStop.Location = new System.Drawing.Point(309, 409);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(124, 36);
+            this.btnStop.TabIndex = 32;
+            this.btnStop.Text = "Stop";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
             // Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(666, 457);
+            this.ClientSize = new System.Drawing.Size(646, 469);
+            this.Controls.Add(this.btnStop);
+            this.Controls.Add(this.btnWaveGenerator);
             this.Controls.Add(this.lblBufferSize);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.btnSend);
@@ -407,6 +431,8 @@
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.Label label7;
         public System.Windows.Forms.Label lblBufferSize;
+        private System.Windows.Forms.Button btnWaveGenerator;
+        private System.Windows.Forms.Button btnStop;
     }
 }
 

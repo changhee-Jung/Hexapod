@@ -19,12 +19,15 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Threading;
 using PI;
+using System.Diagnostics;
+
 namespace DataRecorder
 {
     using GraphLib;
     public partial class MainWindow : Form
     {
         private int ID;
+        Stopwatch sw = new Stopwatch();
         public MainWindow()
         {
             InitializeComponent();
@@ -232,11 +235,14 @@ namespace DataRecorder
 
         private void btnqPOS_Click(object sender, EventArgs e)
         {
-
+            sw.Reset();
+            sw.Start();
             double[] dVals = new double[1];
             
             PI.GCS2.qPOS(ID, cmbAvailableAxes.Text, dVals);
             lblPOS.Text = String.Format("{0:0.0}", dVals[0]);
+            sw.Stop();
+            Console.WriteLine("Check Time: " + sw.ElapsedMilliseconds.ToString() + "msec");
         }
 
     }

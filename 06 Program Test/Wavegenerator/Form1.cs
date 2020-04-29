@@ -30,6 +30,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
 using PI;
+using System.Diagnostics;
 namespace Wavegenerator
 {
     public partial class MainWindow : Form
@@ -39,7 +40,7 @@ namespace Wavegenerator
         int iWaveTableID_1 = 10;
         int iWaveTableID_2 = 20;
 
-
+        Stopwatch sw = new Stopwatch();
         public MainWindow()
         {
             InitializeComponent();
@@ -83,7 +84,7 @@ namespace Wavegenerator
             if (0 != iErr)
             {
                 StringBuilder sErrText = new StringBuilder(256);
-                PI.GCS2.TranslateError(iErr, sErrText, 256);
+                PI.GCS2.TranslateError(iErr, sErrText, 256); // 이게잇구먼
                 MessageBox.Show("Error: " + iErr.ToString() + " (" + sErrText.ToString() + ")");
             }
         }
@@ -91,6 +92,7 @@ namespace Wavegenerator
 
         public void GetInterfaceInformation()
         {
+            
             // query and display "IDN?"
             StringBuilder IdnBuffer = new StringBuilder(256);
             PI.GCS2.qIDN(ID, IdnBuffer, 255);
@@ -123,6 +125,7 @@ namespace Wavegenerator
 
         private void btnMOV_Click(object sender, EventArgs e)
         {
+
             // move to start-position of wavetables
             // !! adjust start-position when changing waveform or assignment !!
             double[] dVals = new double[2];
@@ -130,10 +133,11 @@ namespace Wavegenerator
             dVals[1] = 1;
 
             PI.GCS2.MOV(ID, "X Y", dVals);
+
         }
 
 
-        private void btnWAV_Click(object sender, EventArgs e)
+        private void btnWAV_Click(object sender, EventArgs e) // sin 파 만들기
         {
             // define sine-waveform using shape-parameters
             int iOffsetOfFirstPointInWaveTable = 0;     // = "StartPoint"
@@ -164,8 +168,7 @@ namespace Wavegenerator
             iWaveGenerator[0] = 1;
             iWaveGenerator[1] = 2;
 
-            PI.GCS2.WSL(ID, iWaveGenerator, iWaveTable, 2);
-
+            PI.GCS2.WSL(ID, iWaveGenerator, iWaveTable, 2); // 파형 생성기에 Wave Table 설정
 
             // define number of repetitions
             int[] iNumRep = new int[2];
@@ -181,7 +184,7 @@ namespace Wavegenerator
                 iNumRep[1] = Convert.ToInt16(txtWGC.Text);
             }
 
-            PI.GCS2.WGC(ID, iWaveGenerator, iNumRep, 2);
+            PI.GCS2.WGC(ID, iWaveGenerator, iNumRep, 2); // 반복도 설정
 
 
             // define 1ms cycle time with linear interpolation
@@ -190,17 +193,18 @@ namespace Wavegenerator
             iTableRateArray[1] = 10;
 
             int[] iInterpolationsType = new int[2];
-            iInterpolationsType[0] = 1;     // 1 = linear interpolation
+            iInterpolationsType[0] = 1;     // 1 = linear interpolation / 0 = none
             iInterpolationsType[1] = 1;
 
-            PI.GCS2.WTR(ID, iWaveGenerator, iTableRateArray, iInterpolationsType, 2);
+            PI.GCS2.WTR(ID, iWaveGenerator, iTableRateArray, iInterpolationsType, 2); // Wave Generator Table Rate 설정
 
 
             // start wavegenerator
             int[] iStartMode = new int[2];
             iStartMode[0] = 1;              // 1 = start
             iStartMode[1] = 1;
-            PI.GCS2.WGO(ID, iWaveGenerator, iStartMode, 2);
+            PI.GCS2.WGO(ID, iWaveGenerator, iStartMode, 2); // 시작 모드 설정
+           
         }
 
 
