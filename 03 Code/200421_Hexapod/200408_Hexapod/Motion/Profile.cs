@@ -34,7 +34,7 @@ namespace Hexapod
         public Dictionary<int, double> DicOfAcceleration_MovingAverage { get { return m_dicAcceleration_MovingAverage; } }
 
 
-        private double[] m_ardbVelocity = new double[300];
+        private double[] m_ardbVelocity = new double[100];
             
 
         public Profile(Motor motor)

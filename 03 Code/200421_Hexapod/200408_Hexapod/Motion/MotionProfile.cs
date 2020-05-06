@@ -86,7 +86,7 @@ namespace Hexapod
 
                 case MotionState.SetTrapezoidalProfile:
                     CalcuateVelocityProfile();
-                    CalcuateAccelerationProfile();      
+                    CalcuateAccelerationProfile();
                     m_State = MotionState.SetMovingAverage_Profile;
                     break;
 

@@ -125,6 +125,7 @@ namespace Seq
                     }
                     break;
                 case ControlState.SetVector:
+                    hardware.Update();
                     vector.Update(hardware);
                     if (vector.Procedure == Vector.SettingProcedure.SetCompletedActuatorLengths)
                     {
