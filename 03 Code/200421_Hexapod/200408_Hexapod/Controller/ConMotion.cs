@@ -127,7 +127,7 @@ namespace Seq
                 case ControlState.SetVector:
                     hardware.Update();
                     vector.Update(hardware);
-                    if (vector.Procedure == Vector.SettingProcedure.SetCompletedActuatorLengths)
+                    if (vector.Procedure == Vector.SettingProcedure.Completed)
                     {
                         m_State = ControlState.Wait;
                         DisplayActuatorVector();

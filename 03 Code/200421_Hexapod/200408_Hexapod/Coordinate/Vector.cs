@@ -11,12 +11,13 @@ namespace Hexapod
         public enum SettingProcedure
         {
             none,
-            SetCompletedHeightVector,
-            SetCompletedBaseJointToUpperPlate,
-            SetCompletedBaseToUpperJoint_Rotation,
-            SetCompletedBaseJointToUpperJointVector,
-            SetCompletedCompensationVector,
-            SetCompletedActuatorLengths
+            SetHeightVector,
+            SetBaseJointToUpperPlate,
+            SetBaseToUpperJoint_Rotation,
+            SetBaseJointToUpperJointVector,
+            SetCompensationVector,
+            CalculateActuatorLengths,
+            Completed
         }
 
         public Vector()
@@ -60,44 +61,41 @@ namespace Hexapod
                 switch (m_Procedure)
                 {
                     case SettingProcedure.none:
+                        m_Procedure = SettingProcedure.SetHeightVector;
+                        break;
+                    case SettingProcedure.SetHeightVector:
                         // 1. base to Upper point height vector 계산
                         SetBasetoHeightVector(hardware.Plate_Upper.Height);
-                        m_Procedure = SettingProcedure.SetCompletedHeightVector;
+                        m_Procedure = SettingProcedure.SetBaseJointToUpperPlate;
                         break;
-
-                    case SettingProcedure.SetCompletedHeightVector:
+                    case SettingProcedure.SetBaseJointToUpperPlate:
                         // 2. baseJoint to UpperPlate Vector 위치 벡터 계산
                         CalculateBaseToUpperPlateVector(hardware.Plate_Base.dicOfJointVector);
-                        m_Procedure = SettingProcedure.SetCompletedBaseJointToUpperPlate;
+                        m_Procedure = SettingProcedure.SetBaseJointToUpperJointVector;
                         break;
-
-                    case SettingProcedure.SetCompletedBaseJointToUpperPlate:
+                    case SettingProcedure.SetBaseJointToUpperJointVector:
                         // 3. base에서 바라본 Upperjoint vector 계산(회전 행렬)
                         CalculateBaseToUpperJoint_Rotation(hardware.Plate_Upper.Rotation, hardware.Plate_Upper.dicOfJointVector);
-                        m_Procedure = SettingProcedure.SetCompletedBaseToUpperJoint_Rotation;
+                        m_Procedure = SettingProcedure.SetBaseToUpperJoint_Rotation;
                         break;
-
-                    case SettingProcedure.SetCompletedBaseToUpperJoint_Rotation:
+                    case SettingProcedure.SetBaseToUpperJoint_Rotation:
                         // 4. base에서 바라본 BaseJoint와 UpperJoint 사이의 벡터 계산
                         CalculateBaseJointToUpperJointVector();
-                        m_Procedure = SettingProcedure.SetCompletedBaseJointToUpperJointVector;
+                        m_Procedure = SettingProcedure.SetCompensationVector;
                         break;
-
-                    case SettingProcedure.SetCompletedBaseJointToUpperJointVector:
+                    case SettingProcedure.SetCompensationVector:
                         // 5.1 보상할 병진 행렬 계산(목표 위치)
                         CalculateTargetPostionTranslation(hardware.Plate_Upper.Position);
                         // 5.2 보상할 병진 행렬 계산(ToolOffset) 위치
                         CompensateToolOffsetVector(hardware.Plate_Upper.Rotation, hardware.Plate_Upper.ToolOffset);
-                        m_Procedure = SettingProcedure.SetCompletedCompensationVector;
+                        m_Procedure = SettingProcedure.CalculateActuatorLengths;
                         break;
-
-                    case SettingProcedure.SetCompletedCompensationVector:
+                    case SettingProcedure.CalculateActuatorLengths:
                         // 6. 목표 엑추에이터 값 계산
                         CalculateActuatorLengths();
-                        m_Procedure = SettingProcedure.SetCompletedActuatorLengths;
+                        m_Procedure = SettingProcedure.Completed;
                         break;
-
-                    case SettingProcedure.SetCompletedActuatorLengths:
+                    case SettingProcedure.Completed:
                         break;
                 }
             }
@@ -105,7 +103,6 @@ namespace Hexapod
             {
                 Console.WriteLine(e.ToString());
             }
-
         }
 
         /// <summary>
